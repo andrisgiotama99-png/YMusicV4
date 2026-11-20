@@ -2076,7 +2076,7 @@ void file_av_set_virtualizer(FileAv *p, float width)
         audio_fx_set_virtualizer(p->fx, width);
 }
 
-void file_av_set_reverb(FileAv *p, const float params[6])
+void file_av_set_reverb(FileAv *p, const float params[10])
 {
     if (p && p->fx)
         audio_fx_set_reverb(p->fx, params);

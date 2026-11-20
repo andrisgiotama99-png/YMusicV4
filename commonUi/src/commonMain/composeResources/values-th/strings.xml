@@ -692,4 +692,9 @@
     <string name="sound_reverb_preset_hall">ฮอลล์</string>
     <string name="sound_reverb_preset_plate">แผ่น</string>
     <string name="sound_reverb_preset_stadium">สนามกีฬา</string>
+    <string name="sound_reverb_advanced">ขั้นสูง</string>
+    <string name="sound_reverb_prefilter">พรีฟิลเตอร์</string>
+    <string name="sound_reverb_indiff1">การกระจายอินพุต 1</string>
+    <string name="sound_reverb_indiff2">การกระจายอินพุต 2</string>
+    <string name="sound_reverb_decaydiff">การกระจายการลดทอน</string>
 </resources>

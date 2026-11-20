@@ -692,4 +692,9 @@
     <string name="sound_reverb_preset_hall">Dewan</string>
     <string name="sound_reverb_preset_plate">Plate</string>
     <string name="sound_reverb_preset_stadium">Stadium</string>
+    <string name="sound_reverb_advanced">Lanjutan</string>
+    <string name="sound_reverb_prefilter">Pratapis</string>
+    <string name="sound_reverb_indiff1">Resapan input 1</string>
+    <string name="sound_reverb_indiff2">Resapan input 2</string>
+    <string name="sound_reverb_decaydiff">Resapan reput</string>
 </resources>

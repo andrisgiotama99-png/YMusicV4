@@ -692,4 +692,9 @@
     <string name="sound_reverb_preset_hall">ホール</string>
     <string name="sound_reverb_preset_plate">プレート</string>
     <string name="sound_reverb_preset_stadium">スタジアム</string>
+    <string name="sound_reverb_advanced">詳細</string>
+    <string name="sound_reverb_prefilter">プリフィルター</string>
+    <string name="sound_reverb_indiff1">入力拡散 1</string>
+    <string name="sound_reverb_indiff2">入力拡散 2</string>
+    <string name="sound_reverb_decaydiff">減衰拡散</string>
 </resources>

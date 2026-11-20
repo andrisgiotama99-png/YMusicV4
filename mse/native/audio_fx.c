@@ -94,6 +94,7 @@ struct AudioFx {
     /* Dattorro plate reverb, wet send only (mono send -> stereo taps). */
     int rv_active;
     float rv_room, rv_damp, rv_mix, rv_pre_ms, rv_width;
+    float rv_preFilter, rv_inDiff1, rv_inDiff2, rv_decayDiff;
     float rv_wet1, rv_wet2, rv_dry;
     float rv_wet1_cur, rv_wet2_cur, rv_dry_cur, rv_smooth;
     int rv_on;
@@ -351,6 +352,10 @@ static void rv_derive(AudioFx *fx)
     int pre;
     v->decayAmt = decay;
     v->decayDiff2Amt = clampf(decay + 0.15f, 0.25f, 0.5f);
+    v->preFilterAmt = clampf(fx->rv_preFilter, 0.f, 1.f);
+    v->inDiff1Amt = clampf(fx->rv_inDiff1, 0.f, 1.f);
+    v->inDiff2Amt = clampf(fx->rv_inDiff2, 0.f, 1.f);
+    v->decayDiff1Amt = clampf(fx->rv_decayDiff, 0.f, 1.f);
     /* Dattorro's damping is the LPF coefficient: high = bright, low = dark; the knob is the reverse. */
     v->dampAmt = clampf(0.95f - fx->rv_damp * 0.75f, 0.05f, 0.99f);
     pre = (int)(fx->rv_pre_ms * fs / 1000.f + 0.5f);
@@ -524,6 +529,10 @@ AudioFx *audio_fx_create(void)
     fx->speed = 1.f;
     fx->pitch = 1.f;
     fx->lim_gain = 1.f;
+    fx->rv_preFilter = 0.85f;
+    fx->rv_inDiff1 = 0.75f;
+    fx->rv_inDiff2 = 0.625f;
+    fx->rv_decayDiff = 0.70f;
     if (pthread_mutex_init(&fx->mu, NULL) != 0) {
         free(fx);
         return NULL;
@@ -660,6 +669,10 @@ void audio_fx_set_reverb(AudioFx *fx, const float params[AFX_REVERB_PARAMS])
     fx->rv_mix = clampf(params[3], 0.f, 1.f);
     fx->rv_pre_ms = clampf(params[4], 0.f, AFX_RV_PRE_MAX_MS);
     fx->rv_width = clampf(params[5], 0.f, 1.f);
+    fx->rv_preFilter = clampf(params[6], 0.f, 1.f);
+    fx->rv_inDiff1 = clampf(params[7], 0.f, 1.f);
+    fx->rv_inDiff2 = clampf(params[8], 0.f, 1.f);
+    fx->rv_decayDiff = clampf(params[9], 0.f, 1.f);
     rv_derive(fx);
     if (fabsf(old_pre - fx->rv_pre_ms) >= 0.5f) {
         if (fx->rv.pre.buf)

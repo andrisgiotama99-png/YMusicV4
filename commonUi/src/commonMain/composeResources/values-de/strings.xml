@@ -705,4 +705,9 @@
     <string name="sound_reverb_preset_hall">Saal</string>
     <string name="sound_reverb_preset_plate">Platte</string>
     <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_advanced">Erweitert</string>
+    <string name="sound_reverb_prefilter">Vorfilter</string>
+    <string name="sound_reverb_indiff1">Eingangsdiffusion 1</string>
+    <string name="sound_reverb_indiff2">Eingangsdiffusion 2</string>
+    <string name="sound_reverb_decaydiff">Abklingdiffusion</string>
 </resources>

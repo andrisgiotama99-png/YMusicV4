@@ -772,6 +772,7 @@ private fun ReverbSection(
     onChange: (ReverbConfig) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var advancedOpen by remember { mutableStateOf(false) }
     Column(
         modifier.fillMaxWidth().padding(horizontal = DesignSpacing.Space16),
         verticalArrangement = Arrangement.spacedBy(DesignSpacing.Space8),
@@ -837,6 +838,56 @@ private fun ReverbSection(
                     keyStep = 0.05f,
                     onChange = { onChange(reverb.copy(width = it)) },
                 )
+            }
+            Row(
+                Modifier.fillMaxWidth().clickable { advancedOpen = !advancedOpen },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(DesignSpacing.Space4),
+            ) {
+                Text(
+                    stringResource(Res.string.sound_reverb_advanced),
+                    style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = DesignColors.InkSecondary),
+                )
+            }
+            if (advancedOpen) {
+                FlowRow(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(DesignSpacing.Space8),
+                    verticalArrangement = Arrangement.spacedBy(DesignSpacing.Space8),
+                ) {
+                    RotaryKnob(
+                        enabled = enabled,
+                        title = stringResource(Res.string.sound_reverb_prefilter),
+                        fraction = reverb.preFilter,
+                        valueText = "${(reverb.preFilter * 100).roundToInt()}%",
+                        keyStep = 0.05f,
+                        onChange = { onChange(reverb.copy(preFilter = it)) },
+                    )
+                    RotaryKnob(
+                        enabled = enabled,
+                        title = stringResource(Res.string.sound_reverb_indiff1),
+                        fraction = reverb.inputDiffusion1,
+                        valueText = "${(reverb.inputDiffusion1 * 100).roundToInt()}%",
+                        keyStep = 0.05f,
+                        onChange = { onChange(reverb.copy(inputDiffusion1 = it)) },
+                    )
+                    RotaryKnob(
+                        enabled = enabled,
+                        title = stringResource(Res.string.sound_reverb_indiff2),
+                        fraction = reverb.inputDiffusion2,
+                        valueText = "${(reverb.inputDiffusion2 * 100).roundToInt()}%",
+                        keyStep = 0.05f,
+                        onChange = { onChange(reverb.copy(inputDiffusion2 = it)) },
+                    )
+                    RotaryKnob(
+                        enabled = enabled,
+                        title = stringResource(Res.string.sound_reverb_decaydiff),
+                        fraction = reverb.decayDiffusion,
+                        valueText = "${(reverb.decayDiffusion * 100).roundToInt()}%",
+                        keyStep = 0.05f,
+                        onChange = { onChange(reverb.copy(decayDiffusion = it)) },
+                    )
+                }
             }
         }
     }

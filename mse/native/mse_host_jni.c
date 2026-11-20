@@ -459,14 +459,14 @@ Java_io_ymusic_mse_MseHostNative_setPreamp(JNIEnv *env, jclass cls, jlong handle
 JNIEXPORT void JNICALL
 Java_io_ymusic_mse_MseHostNative_setReverb(JNIEnv *env, jclass cls, jlong handle, jfloatArray params)
 {
-    float tmp[6];
+    float tmp[10];
     jsize n;
     (void)cls;
     memset(tmp, 0, sizeof(tmp));
     if (params) {
         n = (*env)->GetArrayLength(env, params);
-        if (n > 6)
-            n = 6;
+        if (n > 10)
+            n = 10;
         (*env)->GetFloatArrayRegion(env, params, 0, n, tmp);
     }
     mse_host_set_reverb((MseHost *)(intptr_t)handle, tmp);

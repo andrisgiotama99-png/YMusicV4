@@ -731,4 +731,9 @@
     <string name="sound_reverb_preset_hall">Sala</string>
     <string name="sound_reverb_preset_plate">Płyta</string>
     <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_advanced">Zaawansowane</string>
+    <string name="sound_reverb_prefilter">Filtr wstępny</string>
+    <string name="sound_reverb_indiff1">Dyfuzja wejściowa 1</string>
+    <string name="sound_reverb_indiff2">Dyfuzja wejściowa 2</string>
+    <string name="sound_reverb_decaydiff">Dyfuzja zaniku</string>
 </resources>

@@ -393,6 +393,10 @@ class AppGraph(
                                 mix = (eq.getOrNull(16) ?: 0.3f).coerceIn(0f, 1f),
                                 predelayMs = (eq.getOrNull(17) ?: 20f).coerceIn(0f, 200f),
                                 width = (eq.getOrNull(18) ?: 1f).coerceIn(0f, 1f),
+                                preFilter = (eq.getOrNull(19) ?: 0.85f).coerceIn(0f, 1f),
+                                inputDiffusion1 = (eq.getOrNull(20) ?: 0.75f).coerceIn(0f, 1f),
+                                inputDiffusion2 = (eq.getOrNull(21) ?: 0.625f).coerceIn(0f, 1f),
+                                decayDiffusion = (eq.getOrNull(22) ?: 0.70f).coerceIn(0f, 1f),
                             ),
                         )
                     }
@@ -421,6 +425,8 @@ class AppGraph(
                             if (rv.enabled) "1" else "0",
                             rv.room.toString(), rv.damp.toString(), rv.mix.toString(),
                             rv.predelayMs.toString(), rv.width.toString(),
+                            rv.preFilter.toString(), rv.inputDiffusion1.toString(),
+                            rv.inputDiffusion2.toString(), rv.decayDiffusion.toString(),
                         ).joinToString(",")
                         settings.putString(PlaybackEqKey, "${eq.first},${eq.second},${eq.third.first.joinToString(",")},${eq.third.second},$reverb")
                     }

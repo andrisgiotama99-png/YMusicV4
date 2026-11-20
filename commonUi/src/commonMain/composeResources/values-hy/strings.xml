@@ -705,4 +705,9 @@
     <string name="sound_reverb_preset_hall">Դահլիճ</string>
     <string name="sound_reverb_preset_plate">Սալիկ</string>
     <string name="sound_reverb_preset_stadium">Մարզադաշտ</string>
+    <string name="sound_reverb_advanced">Ընդլայնված</string>
+    <string name="sound_reverb_prefilter">Նախնական ֆիլտր</string>
+    <string name="sound_reverb_indiff1">Մուտքային դիֆուզիա 1</string>
+    <string name="sound_reverb_indiff2">Մուտքային դիֆուզիա 2</string>
+    <string name="sound_reverb_decaydiff">Մարման դիֆուզիա</string>
 </resources>

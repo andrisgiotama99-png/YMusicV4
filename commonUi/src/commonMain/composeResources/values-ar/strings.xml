@@ -889,4 +889,9 @@
     <string name="sound_reverb_preset_hall">قاعة</string>
     <string name="sound_reverb_preset_plate">صفيحة</string>
     <string name="sound_reverb_preset_stadium">ملعب</string>
+    <string name="sound_reverb_advanced">متقدم</string>
+    <string name="sound_reverb_prefilter">مرشح تمهيدي</string>
+    <string name="sound_reverb_indiff1">انتشار المدخل 1</string>
+    <string name="sound_reverb_indiff2">انتشار المدخل 2</string>
+    <string name="sound_reverb_decaydiff">انتشار التلاشي</string>
 </resources>

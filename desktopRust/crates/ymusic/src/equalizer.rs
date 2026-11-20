@@ -65,7 +65,12 @@ const STOP_REVERB_DAMP: usize = STOP_REVERB_ROOM + 1;
 const STOP_REVERB_MIX: usize = STOP_REVERB_DAMP + 1;
 const STOP_REVERB_PREDELAY: usize = STOP_REVERB_MIX + 1;
 const STOP_REVERB_WIDTH: usize = STOP_REVERB_PREDELAY + 1;
-const STOP_RESET: usize = STOP_REVERB_WIDTH + 1;
+const STOP_REVERB_ADVANCED: usize = STOP_REVERB_WIDTH + 1;
+const STOP_REVERB_PREFILTER: usize = STOP_REVERB_ADVANCED + 1;
+const STOP_REVERB_INDIFF1: usize = STOP_REVERB_PREFILTER + 1;
+const STOP_REVERB_INDIFF2: usize = STOP_REVERB_INDIFF1 + 1;
+const STOP_REVERB_DECAYDIFF: usize = STOP_REVERB_INDIFF2 + 1;
+const STOP_RESET: usize = STOP_REVERB_DECAYDIFF + 1;
 const STOP_OK: usize = STOP_RESET + 1;
 
 /// Two linear halves, so the neutral 1× sits at the knob's top.
@@ -119,6 +124,10 @@ enum Control {
     ReverbMix,
     ReverbPredelay,
     ReverbWidth,
+    ReverbPreFilter,
+    ReverbInDiff1,
+    ReverbInDiff2,
+    ReverbDecayDiff,
 }
 
 impl Control {
@@ -133,6 +142,10 @@ impl Control {
             Control::ReverbMix => 15,
             Control::ReverbPredelay => 16,
             Control::ReverbWidth => 17,
+            Control::ReverbPreFilter => 18,
+            Control::ReverbInDiff1 => 19,
+            Control::ReverbInDiff2 => 20,
+            Control::ReverbDecayDiff => 21,
         }
     }
 
@@ -147,6 +160,10 @@ impl Control {
             Control::ReverbMix => tone.reverb.mix,
             Control::ReverbPredelay => tone.reverb.predelay_ms,
             Control::ReverbWidth => tone.reverb.width,
+            Control::ReverbPreFilter => tone.reverb.pre_filter,
+            Control::ReverbInDiff1 => tone.reverb.input_diffusion1,
+            Control::ReverbInDiff2 => tone.reverb.input_diffusion2,
+            Control::ReverbDecayDiff => tone.reverb.decay_diffusion,
         }
     }
 
@@ -161,6 +178,10 @@ impl Control {
             Control::ReverbMix => tone.reverb.mix = value,
             Control::ReverbPredelay => tone.reverb.predelay_ms = value,
             Control::ReverbWidth => tone.reverb.width = value,
+            Control::ReverbPreFilter => tone.reverb.pre_filter = value,
+            Control::ReverbInDiff1 => tone.reverb.input_diffusion1 = value,
+            Control::ReverbInDiff2 => tone.reverb.input_diffusion2 = value,
+            Control::ReverbDecayDiff => tone.reverb.decay_diffusion = value,
         }
     }
 
@@ -169,7 +190,14 @@ impl Control {
         match self {
             Control::Virtualizer => virtualizer_fraction(value),
             Control::ReverbPredelay => value / REVERB_PREDELAY_MAX,
-            Control::ReverbRoom | Control::ReverbDamp | Control::ReverbMix | Control::ReverbWidth => value,
+            Control::ReverbRoom
+            | Control::ReverbDamp
+            | Control::ReverbMix
+            | Control::ReverbWidth
+            | Control::ReverbPreFilter
+            | Control::ReverbInDiff1
+            | Control::ReverbInDiff2
+            | Control::ReverbDecayDiff => value,
             _ => (value + GAIN_MAX) / (2. * GAIN_MAX),
         }
     }
@@ -179,9 +207,14 @@ impl Control {
         match self {
             Control::Virtualizer => virtualizer_width(fraction),
             Control::ReverbPredelay => (fraction * REVERB_PREDELAY_MAX).round(),
-            Control::ReverbRoom | Control::ReverbDamp | Control::ReverbMix | Control::ReverbWidth => {
-                (fraction * 100.).round() / 100.
-            }
+            Control::ReverbRoom
+            | Control::ReverbDamp
+            | Control::ReverbMix
+            | Control::ReverbWidth
+            | Control::ReverbPreFilter
+            | Control::ReverbInDiff1
+            | Control::ReverbInDiff2
+            | Control::ReverbDecayDiff => (fraction * 100.).round() / 100.,
             _ => (fraction * 2. * GAIN_MAX - GAIN_MAX).round(),
         }
     }
@@ -194,7 +227,11 @@ impl Control {
             | Control::ReverbDamp
             | Control::ReverbMix
             | Control::ReverbPredelay
-            | Control::ReverbWidth => self.at_fraction(self.fraction(value) + delta * REVERB_KEY_STEP),
+            | Control::ReverbWidth
+            | Control::ReverbPreFilter
+            | Control::ReverbInDiff1
+            | Control::ReverbInDiff2
+            | Control::ReverbDecayDiff => self.at_fraction(self.fraction(value) + delta * REVERB_KEY_STEP),
             _ => (value + delta).round().clamp(-GAIN_MAX, GAIN_MAX),
         }
     }
@@ -234,7 +271,8 @@ pub struct EqualizerDialog {
     drag: Option<Drag>,
     /// The fader area and the knobs as last painted.
     area: Rc<Cell<Bounds<Pixels>>>,
-    knobs: [Rc<Cell<Bounds<Pixels>>>; 7],
+    knobs: [Rc<Cell<Bounds<Pixels>>>; 11],
+    reverb_advanced: bool,
     focus: FocusList,
     scroll: ScrollHandle,
     _subscriptions: Vec<Subscription>,
@@ -254,7 +292,14 @@ impl EqualizerDialog {
             let (min, max, step) = match control {
                 Control::Virtualizer => (VIRTUALIZER_RANGE.0, VIRTUALIZER_RANGE.1, 1. / VIRTUALIZER_STEPS_PER_UNIT),
                 Control::ReverbPredelay => (0., REVERB_PREDELAY_MAX, 1.),
-                Control::ReverbRoom | Control::ReverbDamp | Control::ReverbMix | Control::ReverbWidth => (0., 1., 0.01),
+                Control::ReverbRoom
+                | Control::ReverbDamp
+                | Control::ReverbMix
+                | Control::ReverbWidth
+                | Control::ReverbPreFilter
+                | Control::ReverbInDiff1
+                | Control::ReverbInDiff2
+                | Control::ReverbDecayDiff => (0., 1., 0.01),
                 _ => (-GAIN_MAX, GAIN_MAX, 1.),
             };
             cx.new(|_| SliderState::new().min(min).max(max).step(step).default_value(control.of(&tone)))
@@ -268,6 +313,7 @@ impl EqualizerDialog {
             drag: None,
             area: Rc::default(),
             knobs: std::array::from_fn(|_| Rc::default()),
+            reverb_advanced: false,
             focus: FocusList::modal(Some(scroll.clone()), cx),
             scroll,
             _subscriptions: subscriptions,
@@ -286,6 +332,10 @@ impl EqualizerDialog {
                 Control::ReverbMix,
                 Control::ReverbPredelay,
                 Control::ReverbWidth,
+                Control::ReverbPreFilter,
+                Control::ReverbInDiff1,
+                Control::ReverbInDiff2,
+                Control::ReverbDecayDiff,
             ])
             .collect()
     }
@@ -345,6 +395,10 @@ impl EqualizerDialog {
             Control::ReverbMix => 4,
             Control::ReverbPredelay => 5,
             Control::ReverbWidth => 6,
+            Control::ReverbPreFilter => 7,
+            Control::ReverbInDiff1 => 8,
+            Control::ReverbInDiff2 => 9,
+            Control::ReverbDecayDiff => 10,
             _ => 0,
         }
     }
@@ -435,6 +489,10 @@ impl EqualizerDialog {
             Control::ReverbMix => STOP_REVERB_MIX,
             Control::ReverbPredelay => STOP_REVERB_PREDELAY,
             Control::ReverbWidth => STOP_REVERB_WIDTH,
+            Control::ReverbPreFilter => STOP_REVERB_PREFILTER,
+            Control::ReverbInDiff1 => STOP_REVERB_INDIFF1,
+            Control::ReverbInDiff2 => STOP_REVERB_INDIFF2,
+            Control::ReverbDecayDiff => STOP_REVERB_DECAYDIFF,
         }
     }
 
@@ -640,6 +698,10 @@ impl EqualizerDialog {
             Control::ReverbMix => (t(Str::SoundReverbMix), percent(value)),
             Control::ReverbPredelay => (t(Str::SoundReverbPredelay), format!("{} ms", value.round() as i32)),
             Control::ReverbWidth => (t(Str::SoundReverbWidth), percent(value)),
+            Control::ReverbPreFilter => (t(Str::SoundReverbPrefilter), percent(value)),
+            Control::ReverbInDiff1 => (t(Str::SoundReverbIndiff1), percent(value)),
+            Control::ReverbInDiff2 => (t(Str::SoundReverbIndiff2), percent(value)),
+            Control::ReverbDecayDiff => (t(Str::SoundReverbDecaydiff), percent(value)),
             _ => (t(Str::SoundBass), tf(Str::SoundDb, &[&db_label(value)])),
         };
         let fraction = control.fraction(value).clamp(0., 1.);
@@ -738,6 +800,63 @@ impl EqualizerDialog {
                         ))
                         .child(self.knob(Control::ReverbWidth, rv.width, lit == Some(Control::ReverbWidth), cx)),
                 );
+            let advanced_toggle = h_flex()
+                .w_full()
+                .items_center()
+                .gap(px(8.))
+                .child(
+                    div()
+                        .text_size(px(13.))
+                        .font_semibold()
+                        .text_color(theme.muted_foreground)
+                        .child(t(Str::SoundReverbAdvanced)),
+                )
+                .id("eq-reverb-advanced")
+                .role(Role::Button)
+                .aria_label(t(Str::SoundReverbAdvanced))
+                .cursor_pointer()
+                .on_click(cx.listener(|view, _, _, cx| {
+                    view.reverb_advanced = !view.reverb_advanced;
+                    cx.notify();
+                }));
+            section = section.child(self.focus.item(STOP_REVERB_ADVANCED, advanced_toggle, cx));
+            if self.reverb_advanced {
+                section = section
+                    .child(
+                        h_flex()
+                            .w_full()
+                            .justify_evenly()
+                            .child(self.knob(
+                                Control::ReverbPreFilter,
+                                rv.pre_filter,
+                                lit == Some(Control::ReverbPreFilter),
+                                cx,
+                            ))
+                            .child(self.knob(
+                                Control::ReverbInDiff1,
+                                rv.input_diffusion1,
+                                lit == Some(Control::ReverbInDiff1),
+                                cx,
+                            )),
+                    )
+                    .child(
+                        h_flex()
+                            .w_full()
+                            .justify_evenly()
+                            .child(self.knob(
+                                Control::ReverbInDiff2,
+                                rv.input_diffusion2,
+                                lit == Some(Control::ReverbInDiff2),
+                                cx,
+                            ))
+                            .child(self.knob(
+                                Control::ReverbDecayDiff,
+                                rv.decay_diffusion,
+                                lit == Some(Control::ReverbDecayDiff),
+                                cx,
+                            )),
+                    );
+            }
         }
         section
     }

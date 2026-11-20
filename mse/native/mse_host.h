@@ -95,7 +95,7 @@ void mse_host_set_eq(MseHost *h, const float bands_db[10]);
 void mse_host_set_bass(MseHost *h, float db);
 void mse_host_set_virtualizer(MseHost *h, float width);
 void mse_host_set_preamp(MseHost *h, float db);
-void mse_host_set_reverb(MseHost *h, const float params[6]);
+void mse_host_set_reverb(MseHost *h, const float params[10]);
 /* Fixed-position log-frequency bars in 0..1 from the PCM color path. */
 int mse_host_pcm_levels(MseHost *h, float *out, int n);
 

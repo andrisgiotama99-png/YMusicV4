@@ -2466,7 +2466,7 @@ void mse_host_set_virtualizer(MseHost *h, float width)
         audio_fx_set_virtualizer(h->fx, width);
 }
 
-void mse_host_set_reverb(MseHost *h, const float params[6])
+void mse_host_set_reverb(MseHost *h, const float params[10])
 {
     if (h && h->fx)
         audio_fx_set_reverb(h->fx, params);

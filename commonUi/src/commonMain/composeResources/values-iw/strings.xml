@@ -718,4 +718,9 @@
     <string name="sound_reverb_preset_hall">אולם</string>
     <string name="sound_reverb_preset_plate">פלטה</string>
     <string name="sound_reverb_preset_stadium">אצטדיון</string>
+    <string name="sound_reverb_advanced">מתקדם</string>
+    <string name="sound_reverb_prefilter">קדם-מסנן</string>
+    <string name="sound_reverb_indiff1">פיזור כניסה 1</string>
+    <string name="sound_reverb_indiff2">פיזור כניסה 2</string>
+    <string name="sound_reverb_decaydiff">פיזור דעיכה</string>
 </resources>

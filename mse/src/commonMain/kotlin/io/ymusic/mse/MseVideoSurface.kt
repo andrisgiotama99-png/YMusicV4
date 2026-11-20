@@ -22,7 +22,7 @@ expect class MseVideoSurface {
         preamp: Float,
     )
 
-    /** Dattorro reverb params: [active, room, damp, mix, predelayMs, width]. */
+    /** Dattorro reverb params: [active, room, damp, mix, predelayMs, width, preFilter, inDiff1, inDiff2, decayDiff]. */
     fun setReverb(params: FloatArray)
 
     /** Fixed-position log-frequency bars in 0..1. Returns count written. */

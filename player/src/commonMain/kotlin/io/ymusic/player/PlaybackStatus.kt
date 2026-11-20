@@ -55,6 +55,10 @@ data class ReverbConfig(
     val mix: Float = 0.3f,
     val predelayMs: Float = 20f,
     val width: Float = 1f,
+    val preFilter: Float = 0.85f,
+    val inputDiffusion1: Float = 0.75f,
+    val inputDiffusion2: Float = 0.625f,
+    val decayDiffusion: Float = 0.70f,
 )
 
 /**

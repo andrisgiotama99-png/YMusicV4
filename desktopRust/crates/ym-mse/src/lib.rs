@@ -24,17 +24,33 @@ pub struct Reverb {
     pub mix: f32,
     pub predelay_ms: f32,
     pub width: f32,
+    pub pre_filter: f32,
+    pub input_diffusion1: f32,
+    pub input_diffusion2: f32,
+    pub decay_diffusion: f32,
 }
 
 impl Default for Reverb {
     fn default() -> Self {
-        Self { enabled: false, room: 0.5, damp: 0.5, mix: 0.3, predelay_ms: 20.0, width: 1.0 }
+        Self {
+            enabled: false,
+            room: 0.5,
+            damp: 0.5,
+            mix: 0.3,
+            predelay_ms: 20.0,
+            width: 1.0,
+            pre_filter: 0.85,
+            input_diffusion1: 0.75,
+            input_diffusion2: 0.625,
+            decay_diffusion: 0.70,
+        }
     }
 }
 
 impl Reverb {
-    /// The C parameter vector for `audio_fx_set_reverb`: active, room, damp, mix, predelay ms, width.
-    pub(crate) fn params(&self) -> [f32; 6] {
+    /// The C parameter vector for `audio_fx_set_reverb`: active, room, damp, mix, predelay ms, width,
+    /// pre-filter, input diffusion 1/2, decay diffusion.
+    pub(crate) fn params(&self) -> [f32; 10] {
         [
             if self.enabled { 1.0 } else { 0.0 },
             self.room.clamp(0.0, 1.0),
@@ -42,6 +58,10 @@ impl Reverb {
             self.mix.clamp(0.0, 1.0),
             self.predelay_ms.clamp(0.0, 200.0),
             self.width.clamp(0.0, 1.0),
+            self.pre_filter.clamp(0.0, 1.0),
+            self.input_diffusion1.clamp(0.0, 1.0),
+            self.input_diffusion2.clamp(0.0, 1.0),
+            self.decay_diffusion.clamp(0.0, 1.0),
         ]
     }
 }

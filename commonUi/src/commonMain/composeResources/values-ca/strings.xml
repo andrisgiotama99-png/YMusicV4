@@ -718,4 +718,9 @@
     <string name="sound_reverb_preset_hall">Hall</string>
     <string name="sound_reverb_preset_plate">Placa</string>
     <string name="sound_reverb_preset_stadium">Estadi</string>
+    <string name="sound_reverb_advanced">Avançat</string>
+    <string name="sound_reverb_prefilter">Prefiltre</string>
+    <string name="sound_reverb_indiff1">Difusió d\'entrada 1</string>
+    <string name="sound_reverb_indiff2">Difusió d\'entrada 2</string>
+    <string name="sound_reverb_decaydiff">Difusió de decaïment</string>
 </resources>

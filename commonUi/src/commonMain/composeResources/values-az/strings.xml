@@ -705,4 +705,9 @@
     <string name="sound_reverb_preset_hall">Zal</string>
     <string name="sound_reverb_preset_plate">Plate</string>
     <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_advanced">Ətraflı</string>
+    <string name="sound_reverb_prefilter">Ön filtr</string>
+    <string name="sound_reverb_indiff1">Giriş diffuziyası 1</string>
+    <string name="sound_reverb_indiff2">Giriş diffuziyası 2</string>
+    <string name="sound_reverb_decaydiff">Sönmə diffuziyası</string>
 </resources>

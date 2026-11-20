@@ -705,4 +705,9 @@
     <string name="sound_reverb_preset_hall">Zaal</string>
     <string name="sound_reverb_preset_plate">Plaat</string>
     <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_advanced">Geavanceerd</string>
+    <string name="sound_reverb_prefilter">Voorfilter</string>
+    <string name="sound_reverb_indiff1">Ingangsdiffusie 1</string>
+    <string name="sound_reverb_indiff2">Ingangsdiffusie 2</string>
+    <string name="sound_reverb_decaydiff">Vervaldiffusie</string>
 </resources>

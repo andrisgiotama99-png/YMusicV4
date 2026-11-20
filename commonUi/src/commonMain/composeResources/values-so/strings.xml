@@ -705,4 +705,9 @@
     <string name="sound_reverb_preset_hall">Hool</string>
     <string name="sound_reverb_preset_plate">Plate</string>
     <string name="sound_reverb_preset_stadium">Stadium</string>
+    <string name="sound_reverb_advanced">Horumarsan</string>
+    <string name="sound_reverb_prefilter">Shaandhe hore</string>
+    <string name="sound_reverb_indiff1">Fidinta gelitaanka 1</string>
+    <string name="sound_reverb_indiff2">Fidinta gelitaanka 2</string>
+    <string name="sound_reverb_decaydiff">Fidinta baaba\'a</string>
 </resources>

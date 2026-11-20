@@ -66,6 +66,10 @@ impl AudioEffects {
                     mix: saved.get(16).copied().unwrap_or(0.3).clamp(0.0, 1.0),
                     predelay_ms: saved.get(17).copied().unwrap_or(20.0).clamp(0.0, 200.0),
                     width: saved.get(18).copied().unwrap_or(1.0).clamp(0.0, 1.0),
+                    pre_filter: saved.get(19).copied().unwrap_or(0.85).clamp(0.0, 1.0),
+                    input_diffusion1: saved.get(20).copied().unwrap_or(0.75).clamp(0.0, 1.0),
+                    input_diffusion2: saved.get(21).copied().unwrap_or(0.625).clamp(0.0, 1.0),
+                    decay_diffusion: saved.get(22).copied().unwrap_or(0.70).clamp(0.0, 1.0),
                 };
             }
         }
@@ -79,13 +83,17 @@ impl AudioEffects {
         let bands = tone.eq_db.iter().copied().map(float).collect::<Vec<_>>().join(",");
         let rv = &tone.reverb;
         let reverb = format!(
-            "{},{},{},{},{},{}",
+            "{},{},{},{},{},{},{},{},{},{}",
             if rv.enabled { "1" } else { "0" },
             float(rv.room),
             float(rv.damp),
             float(rv.mix),
             float(rv.predelay_ms),
             float(rv.width),
+            float(rv.pre_filter),
+            float(rv.input_diffusion1),
+            float(rv.input_diffusion2),
+            float(rv.decay_diffusion),
         );
         [
             (SPEED_KEY, float(self.speed)),
@@ -130,19 +138,63 @@ pub const EQ_PRESETS: [(Str, [f32; 10]); 9] = [
 pub const REVERB_PRESETS: [(Str, Reverb); 4] = [
     (
         Str::SoundReverbPresetRoom,
-        Reverb { enabled: true, room: 0.35, damp: 0.6, mix: 0.25, predelay_ms: 10.0, width: 0.8 },
+        Reverb {
+            enabled: true,
+            room: 0.35,
+            damp: 0.6,
+            mix: 0.25,
+            predelay_ms: 10.0,
+            width: 0.8,
+            pre_filter: 0.85,
+            input_diffusion1: 0.75,
+            input_diffusion2: 0.625,
+            decay_diffusion: 0.70,
+        },
     ),
     (
         Str::SoundReverbPresetHall,
-        Reverb { enabled: true, room: 0.75, damp: 0.45, mix: 0.35, predelay_ms: 40.0, width: 1.0 },
+        Reverb {
+            enabled: true,
+            room: 0.75,
+            damp: 0.45,
+            mix: 0.35,
+            predelay_ms: 40.0,
+            width: 1.0,
+            pre_filter: 0.85,
+            input_diffusion1: 0.75,
+            input_diffusion2: 0.625,
+            decay_diffusion: 0.70,
+        },
     ),
     (
         Str::SoundReverbPresetPlate,
-        Reverb { enabled: true, room: 0.85, damp: 0.25, mix: 0.4, predelay_ms: 5.0, width: 1.0 },
+        Reverb {
+            enabled: true,
+            room: 0.85,
+            damp: 0.25,
+            mix: 0.4,
+            predelay_ms: 5.0,
+            width: 1.0,
+            pre_filter: 0.85,
+            input_diffusion1: 0.75,
+            input_diffusion2: 0.625,
+            decay_diffusion: 0.70,
+        },
     ),
     (
         Str::SoundReverbPresetStadium,
-        Reverb { enabled: true, room: 0.95, damp: 0.35, mix: 0.45, predelay_ms: 80.0, width: 1.0 },
+        Reverb {
+            enabled: true,
+            room: 0.95,
+            damp: 0.35,
+            mix: 0.45,
+            predelay_ms: 80.0,
+            width: 1.0,
+            pre_filter: 0.85,
+            input_diffusion1: 0.75,
+            input_diffusion2: 0.625,
+            decay_diffusion: 0.70,
+        },
     ),
 ];
 

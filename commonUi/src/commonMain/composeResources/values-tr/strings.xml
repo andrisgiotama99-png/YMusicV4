@@ -705,4 +705,9 @@
     <string name="sound_reverb_preset_hall">Salon</string>
     <string name="sound_reverb_preset_plate">Plaka</string>
     <string name="sound_reverb_preset_stadium">Stadyum</string>
+    <string name="sound_reverb_advanced">Gelişmiş</string>
+    <string name="sound_reverb_prefilter">Ön filtre</string>
+    <string name="sound_reverb_indiff1">Giriş difüzyonu 1</string>
+    <string name="sound_reverb_indiff2">Giriş difüzyonu 2</string>
+    <string name="sound_reverb_decaydiff">Sönüm difüzyonu</string>
 </resources>

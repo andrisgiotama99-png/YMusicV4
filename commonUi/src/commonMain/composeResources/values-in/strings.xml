@@ -692,4 +692,9 @@
     <string name="sound_reverb_preset_hall">Aula</string>
     <string name="sound_reverb_preset_plate">Plate</string>
     <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_advanced">Lanjutan</string>
+    <string name="sound_reverb_prefilter">Prafilter</string>
+    <string name="sound_reverb_indiff1">Difusi input 1</string>
+    <string name="sound_reverb_indiff2">Difusi input 2</string>
+    <string name="sound_reverb_decaydiff">Difusi peluruhan</string>
 </resources>

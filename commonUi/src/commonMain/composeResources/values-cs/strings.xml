@@ -731,4 +731,9 @@
     <string name="sound_reverb_preset_hall">Sál</string>
     <string name="sound_reverb_preset_plate">Deska</string>
     <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_advanced">Pokročilé</string>
+    <string name="sound_reverb_prefilter">Vstupní filtr</string>
+    <string name="sound_reverb_indiff1">Vstupní difuze 1</string>
+    <string name="sound_reverb_indiff2">Vstupní difuze 2</string>
+    <string name="sound_reverb_decaydiff">Difuze dozvuku</string>
 </resources>

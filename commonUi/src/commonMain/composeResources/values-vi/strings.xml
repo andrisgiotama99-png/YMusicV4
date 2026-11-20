@@ -813,4 +813,9 @@
     <string name="sound_reverb_preset_hall">Hội trường</string>
     <string name="sound_reverb_preset_plate">Plate</string>
     <string name="sound_reverb_preset_stadium">Sân vận động</string>
+    <string name="sound_reverb_advanced">Nâng cao</string>
+    <string name="sound_reverb_prefilter">Bộ lọc trước</string>
+    <string name="sound_reverb_indiff1">Khuếch tán đầu vào 1</string>
+    <string name="sound_reverb_indiff2">Khuếch tán đầu vào 2</string>
+    <string name="sound_reverb_decaydiff">Khuếch tán suy giảm</string>
 </resources>

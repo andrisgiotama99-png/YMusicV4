@@ -705,4 +705,9 @@
     <string name="sound_reverb_preset_hall">હોલ</string>
     <string name="sound_reverb_preset_plate">પ્લેટ</string>
     <string name="sound_reverb_preset_stadium">સ્ટેડિયમ</string>
+    <string name="sound_reverb_advanced">વિગતવાર</string>
+    <string name="sound_reverb_prefilter">પ્રી-ફિલ્ટર</string>
+    <string name="sound_reverb_indiff1">ઇનપુટ ડિફ્યુઝન 1</string>
+    <string name="sound_reverb_indiff2">ઇનપુટ ડિફ્યુઝન 2</string>
+    <string name="sound_reverb_decaydiff">ડિકે ડિફ્યુઝન</string>
 </resources>
