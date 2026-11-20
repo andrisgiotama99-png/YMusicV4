@@ -31,6 +31,8 @@ expect object MseHostNative {
 
     fun setPreamp(handle: Long, db: Float)
 
+    fun setReverb(handle: Long, params: FloatArray)
+
     /** The picture is off screen: rest the video decoder, keep buffering the chosen quality. */
     fun setVideoHidden(handle: Long, hidden: Boolean)
 

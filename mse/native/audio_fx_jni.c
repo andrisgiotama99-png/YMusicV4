@@ -92,6 +92,22 @@ Java_io_ymusic_mse_AudioFxNative_setPitch(JNIEnv *env, jclass cls, jlong handle,
     audio_fx_set_pitch((AudioFx *)(intptr_t)handle, pitch);
 }
 
+JNIEXPORT void JNICALL
+Java_io_ymusic_mse_AudioFxNative_setReverb(JNIEnv *env, jclass cls, jlong handle, jfloatArray params)
+{
+    float tmp[AFX_REVERB_PARAMS];
+    jsize n;
+    (void)cls;
+    memset(tmp, 0, sizeof(tmp));
+    if (params) {
+        n = (*env)->GetArrayLength(env, params);
+        if (n > AFX_REVERB_PARAMS)
+            n = AFX_REVERB_PARAMS;
+        (*env)->GetFloatArrayRegion(env, params, 0, n, tmp);
+    }
+    audio_fx_set_reverb((AudioFx *)(intptr_t)handle, tmp);
+}
+
 JNIEXPORT jint JNICALL
 Java_io_ymusic_mse_AudioFxNative_stretch(
     JNIEnv *env,

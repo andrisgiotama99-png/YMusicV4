@@ -49,6 +49,11 @@ actual class MseVideoSurface(val video: DesktopVideoSurface = DesktopVideoSurfac
         MseHostNative.setPreamp(host, preamp)
     }
 
+    actual fun setReverb(params: FloatArray) {
+        if (host == 0L) return
+        MseHostNative.setReverb(host, params)
+    }
+
     actual fun pcmLevels(out: FloatArray): Int =
         if (host == 0L || out.isEmpty()) 0 else MseHostNative.pcmLevels(host, out)
 

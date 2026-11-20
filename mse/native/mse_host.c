@@ -2466,6 +2466,12 @@ void mse_host_set_virtualizer(MseHost *h, float width)
         audio_fx_set_virtualizer(h->fx, width);
 }
 
+void mse_host_set_reverb(MseHost *h, const float params[6])
+{
+    if (h && h->fx)
+        audio_fx_set_reverb(h->fx, params);
+}
+
 /* Frames colored at the DAC pull but still queued ahead of the playhead (same model as the clock). */
 static int vis_delay_frames(MseHost *h)
 {

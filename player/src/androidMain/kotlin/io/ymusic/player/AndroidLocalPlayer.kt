@@ -370,7 +370,8 @@ internal class AndroidLocalPlayer(
             )
         }
         if (config.eqBands != prev.eqBands || config.bassBoostDb != prev.bassBoostDb ||
-            config.virtualizer != prev.virtualizer || config.preampDb != prev.preampDb
+            config.virtualizer != prev.virtualizer || config.preampDb != prev.preampDb ||
+            config.reverb != prev.reverb
         ) {
             applyColor(config)
         }
@@ -558,6 +559,18 @@ internal class AndroidLocalPlayer(
         AudioFxNative.setBass(fxHandle, config.bassBoostDb)
         AudioFxNative.setVirtualizer(fxHandle, config.virtualizer)
         AudioFxNative.setPreamp(fxHandle, config.preampDb)
+        val rv = config.reverb
+        AudioFxNative.setReverb(
+            fxHandle,
+            floatArrayOf(
+                if (rv.enabled) 1f else 0f,
+                rv.room.coerceIn(0f, 1f),
+                rv.damp.coerceIn(0f, 1f),
+                rv.mix.coerceIn(0f, 1f),
+                rv.predelayMs.coerceIn(0f, 200f),
+                rv.width.coerceIn(0f, 1f),
+            ),
+        )
     }
 
     private fun durationOrUnknown(): Long =

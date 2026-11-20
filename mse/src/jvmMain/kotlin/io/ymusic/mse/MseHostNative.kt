@@ -89,6 +89,9 @@ actual object MseHostNative {
     actual external fun setPreamp(handle: Long, db: Float)
 
     @JvmStatic
+    actual external fun setReverb(handle: Long, params: FloatArray)
+
+    @JvmStatic
     actual external fun pcmLevels(handle: Long, out: FloatArray): Int
 
     @JvmStatic

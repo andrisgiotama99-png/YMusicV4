@@ -46,6 +46,17 @@ fun isPlaying(status: PlaybackStatus, queue: QueueState): Boolean =
 /** How the video fills its surface. Mirrors the legacy player's scale modes. */
 enum class ScaleMode { COVER, FILL, CONTAIN }
 
+/** Freeverb reverb, applied on the wet send only. [mix] crossfades dry→wet (0 = dry);
+ *  [predelayMs] delays the wet send alone, so the dry path adds no latency. */
+data class ReverbConfig(
+    val enabled: Boolean = false,
+    val room: Float = 0.5f,
+    val damp: Float = 0.5f,
+    val mix: Float = 0.3f,
+    val predelayMs: Float = 20f,
+    val width: Float = 1f,
+)
+
 /**
  * The full settable playback state — a single object pushed to the engine via [MediaEngine.setConfig]
  * (and carried by [MediaEngine.load] to apply atomically before the first frame). One config, one
@@ -74,6 +85,8 @@ data class PlaybackConfig(
     val virtualizer: Float = 1f,
     /** Level trim into the equalizer, −12..+12 dB, on top of its automatic loudness matching. */
     val preampDb: Float = 0f,
+    /** Freeverb reverb (wet send only); off by default. */
+    val reverb: ReverbConfig = ReverbConfig(),
     /** False bypasses the equalizer/bass/virtualizer/preamp (system audio effects take over); the values are kept. */
     val inAppAudioFx: Boolean = true,
     /** False: no loudness gain ([PlayableItem.loudnessScale], YouTube's), and no YouTube stable-volume track. */

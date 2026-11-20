@@ -28,6 +28,8 @@ object AudioFxNative {
 
     @JvmStatic external fun setPreamp(handle: Long, db: Float)
 
+    @JvmStatic external fun setReverb(handle: Long, params: FloatArray)
+
     @JvmStatic external fun stretch(
         handle: Long,
         inBuf: ByteBuffer,

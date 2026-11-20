@@ -14,6 +14,7 @@ import io.ymusic.player.PlaybackStatus
 import io.ymusic.player.Player
 import io.ymusic.player.Progress
 import io.ymusic.player.QueueState
+import io.ymusic.player.ReverbConfig
 import io.ymusic.player.ScaleMode
 import io.ymusic.player.VideoQualityState
 import kmphttp.AsyncInterceptor
@@ -212,6 +213,7 @@ internal class StubPlayer : Player {
     override fun setVirtualizer(width: Float) {}
 
     override fun setPreamp(db: Float) {}
+    override fun setReverb(reverb: ReverbConfig) {}
     override fun setInAppAudioFx(enabled: Boolean) {}
 
     override fun setStableVolume(enabled: Boolean) {}
