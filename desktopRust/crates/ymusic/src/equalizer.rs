@@ -19,7 +19,7 @@ use crate::a11y::{FocusList, SliderStop};
 use crate::audio_effects::{AudioEffects, EQ_PRESETS, GAIN_RANGE, VIRTUALIZER_RANGE, preset_name, preset_of};
 use crate::elevated_dialog::{self, button_bar, chrome, press, scroll_body, text_button, title_bar_with};
 use crate::playback::Playback;
-use crate::settings_view::ChromeTones;
+use crate::settings_view::{ChromeTones, compact_switch};
 use crate::speed_pitch::trimmed;
 
 const BAND_LABELS: [&str; 10] = ["31", "62", "125", "250", "500", "1k", "2k", "4k", "8k", "16k"];
@@ -48,11 +48,20 @@ const KNOB_HUB_FRACTION: f32 = 0.15;
 const KNOB_STROKE: f32 = 7.;
 const MENU_CURVE: (f32, f32) = (26., 12.);
 
+const REVERB_PREDELAY_MAX: f32 = 200.;
+const REVERB_KEY_STEP: f32 = 0.05;
+
 const STOP_PRESET: usize = 0;
 const STOP_PREAMP: usize = 1;
 const STOP_BASS: usize = STOP_PREAMP + 11;
 const STOP_VIRTUALIZER: usize = STOP_BASS + 1;
-const STOP_RESET: usize = STOP_VIRTUALIZER + 1;
+const STOP_REVERB_TOGGLE: usize = STOP_VIRTUALIZER + 1;
+const STOP_REVERB_ROOM: usize = STOP_REVERB_TOGGLE + 1;
+const STOP_REVERB_DAMP: usize = STOP_REVERB_ROOM + 1;
+const STOP_REVERB_MIX: usize = STOP_REVERB_DAMP + 1;
+const STOP_REVERB_PREDELAY: usize = STOP_REVERB_MIX + 1;
+const STOP_REVERB_WIDTH: usize = STOP_REVERB_PREDELAY + 1;
+const STOP_RESET: usize = STOP_REVERB_WIDTH + 1;
 const STOP_OK: usize = STOP_RESET + 1;
 
 /// Two linear halves, so the neutral 1× sits at the knob's top.
@@ -101,6 +110,11 @@ enum Control {
     Band(usize),
     Bass,
     Virtualizer,
+    ReverbRoom,
+    ReverbDamp,
+    ReverbMix,
+    ReverbPredelay,
+    ReverbWidth,
 }
 
 impl Control {
@@ -110,6 +124,11 @@ impl Control {
             Control::Band(index) => 1 + index,
             Control::Bass => 11,
             Control::Virtualizer => 12,
+            Control::ReverbRoom => 13,
+            Control::ReverbDamp => 14,
+            Control::ReverbMix => 15,
+            Control::ReverbPredelay => 16,
+            Control::ReverbWidth => 17,
         }
     }
 
@@ -119,6 +138,11 @@ impl Control {
             Control::Band(index) => tone.eq_db[index],
             Control::Bass => tone.bass_db,
             Control::Virtualizer => tone.virtualizer,
+            Control::ReverbRoom => tone.reverb.room,
+            Control::ReverbDamp => tone.reverb.damp,
+            Control::ReverbMix => tone.reverb.mix,
+            Control::ReverbPredelay => tone.reverb.predelay_ms,
+            Control::ReverbWidth => tone.reverb.width,
         }
     }
 
@@ -128,6 +152,11 @@ impl Control {
             Control::Band(index) => tone.eq_db[index] = value,
             Control::Bass => tone.bass_db = value,
             Control::Virtualizer => tone.virtualizer = value,
+            Control::ReverbRoom => tone.reverb.room = value,
+            Control::ReverbDamp => tone.reverb.damp = value,
+            Control::ReverbMix => tone.reverb.mix = value,
+            Control::ReverbPredelay => tone.reverb.predelay_ms = value,
+            Control::ReverbWidth => tone.reverb.width = value,
         }
     }
 
@@ -135,6 +164,8 @@ impl Control {
     fn fraction(self, value: f32) -> f32 {
         match self {
             Control::Virtualizer => virtualizer_fraction(value),
+            Control::ReverbPredelay => value / REVERB_PREDELAY_MAX,
+            Control::ReverbRoom | Control::ReverbDamp | Control::ReverbMix | Control::ReverbWidth => value,
             _ => (value + GAIN_MAX) / (2. * GAIN_MAX),
         }
     }
@@ -143,6 +174,10 @@ impl Control {
         let fraction = fraction.clamp(0., 1.);
         match self {
             Control::Virtualizer => virtualizer_width(fraction),
+            Control::ReverbPredelay => (fraction * REVERB_PREDELAY_MAX).round(),
+            Control::ReverbRoom | Control::ReverbDamp | Control::ReverbMix | Control::ReverbWidth => {
+                (fraction * 100.).round() / 100.
+            }
             _ => (fraction * 2. * GAIN_MAX - GAIN_MAX).round(),
         }
     }
@@ -151,6 +186,11 @@ impl Control {
     fn stepped(self, value: f32, delta: f32) -> f32 {
         match self {
             Control::Virtualizer => self.at_fraction(self.fraction(value) + delta * VIRTUALIZER_KEY_STEP),
+            Control::ReverbRoom
+            | Control::ReverbDamp
+            | Control::ReverbMix
+            | Control::ReverbPredelay
+            | Control::ReverbWidth => self.at_fraction(self.fraction(value) + delta * REVERB_KEY_STEP),
             _ => (value + delta).round().clamp(-GAIN_MAX, GAIN_MAX),
         }
     }
@@ -188,9 +228,9 @@ pub struct EqualizerDialog {
     /// What screen readers and the arrows read per control, kept at Playback's values.
     models: Vec<Entity<SliderState>>,
     drag: Option<Drag>,
-    /// The fader area and the two knobs as last painted.
+    /// The fader area and the knobs as last painted.
     area: Rc<Cell<Bounds<Pixels>>>,
-    knobs: [Rc<Cell<Bounds<Pixels>>>; 2],
+    knobs: [Rc<Cell<Bounds<Pixels>>>; 7],
     focus: FocusList,
     scroll: ScrollHandle,
     _subscriptions: Vec<Subscription>,
@@ -209,6 +249,8 @@ impl EqualizerDialog {
         let model = |control: Control, cx: &mut Context<Self>| {
             let (min, max, step) = match control {
                 Control::Virtualizer => (VIRTUALIZER_RANGE.0, VIRTUALIZER_RANGE.1, 1. / VIRTUALIZER_STEPS_PER_UNIT),
+                Control::ReverbPredelay => (0., REVERB_PREDELAY_MAX, 1.),
+                Control::ReverbRoom | Control::ReverbDamp | Control::ReverbMix | Control::ReverbWidth => (0., 1., 0.01),
                 _ => (-GAIN_MAX, GAIN_MAX, 1.),
             };
             cx.new(|_| SliderState::new().min(min).max(max).step(step).default_value(control.of(&tone)))
@@ -221,7 +263,7 @@ impl EqualizerDialog {
             models,
             drag: None,
             area: Rc::default(),
-            knobs: [Rc::default(), Rc::default()],
+            knobs: std::array::from_fn(|_| Rc::default()),
             focus: FocusList::modal(Some(scroll.clone()), cx),
             scroll,
             _subscriptions: subscriptions,
@@ -230,7 +272,18 @@ impl EqualizerDialog {
 
     fn controls() -> Vec<Control> {
         let bands = (0..10).map(Control::Band);
-        std::iter::once(Control::Preamp).chain(bands).chain([Control::Bass, Control::Virtualizer]).collect()
+        std::iter::once(Control::Preamp)
+            .chain(bands)
+            .chain([
+                Control::Bass,
+                Control::Virtualizer,
+                Control::ReverbRoom,
+                Control::ReverbDamp,
+                Control::ReverbMix,
+                Control::ReverbPredelay,
+                Control::ReverbWidth,
+            ])
+            .collect()
     }
 
     fn sync(&mut self, window: &mut Window, cx: &mut Context<Self>) {
@@ -261,7 +314,9 @@ impl EqualizerDialog {
     }
 
     fn reset(&mut self, cx: &mut Context<Self>) {
-        self.set_tone(Tone::default(), cx);
+        // The JVM reset clears the tone controls but leaves reverb as it is.
+        let reverb = self.playback.read(cx).effects.tone.reverb;
+        self.set_tone(Tone { reverb, ..Tone::default() }, cx);
     }
 
     fn press_fader(&mut self, control: Control, position: Point<Pixels>, cx: &mut Context<Self>) {
@@ -277,8 +332,21 @@ impl EqualizerDialog {
         cx.notify();
     }
 
+    fn knob_index(control: Control) -> usize {
+        match control {
+            Control::Bass => 0,
+            Control::Virtualizer => 1,
+            Control::ReverbRoom => 2,
+            Control::ReverbDamp => 3,
+            Control::ReverbMix => 4,
+            Control::ReverbPredelay => 5,
+            Control::ReverbWidth => 6,
+            _ => 0,
+        }
+    }
+
     fn knob_bounds(&self, control: Control) -> Bounds<Pixels> {
-        self.knobs[usize::from(control == Control::Virtualizer)].get()
+        self.knobs[Self::knob_index(control)].get()
     }
 
     fn drag_to(&mut self, event: &MouseMoveEvent, cx: &mut Context<Self>) {
@@ -358,6 +426,11 @@ impl EqualizerDialog {
             Control::Band(index) => STOP_PREAMP + 1 + index,
             Control::Bass => STOP_BASS,
             Control::Virtualizer => STOP_VIRTUALIZER,
+            Control::ReverbRoom => STOP_REVERB_ROOM,
+            Control::ReverbDamp => STOP_REVERB_DAMP,
+            Control::ReverbMix => STOP_REVERB_MIX,
+            Control::ReverbPredelay => STOP_REVERB_PREDELAY,
+            Control::ReverbWidth => STOP_REVERB_WIDTH,
         }
     }
 
@@ -555,8 +628,14 @@ impl EqualizerDialog {
     fn knob(&self, control: Control, value: f32, lit: bool, cx: &mut Context<Self>) -> Div {
         let theme = cx.theme().clone();
         let inks = Inks::of(cx);
+        let percent = |value: f32| format!("{}%", (value * 100.).round() as i32);
         let (title, value_text) = match control {
             Control::Virtualizer => (t(Str::SoundVirtualizerTitle), format!("{}×", trimmed(value))),
+            Control::ReverbRoom => (t(Str::SoundReverbRoom), percent(value)),
+            Control::ReverbDamp => (t(Str::SoundReverbDamp), percent(value)),
+            Control::ReverbMix => (t(Str::SoundReverbMix), percent(value)),
+            Control::ReverbPredelay => (t(Str::SoundReverbPredelay), format!("{} ms", value.round() as i32)),
+            Control::ReverbWidth => (t(Str::SoundReverbWidth), percent(value)),
             _ => (t(Str::SoundBass), tf(Str::SoundDb, &[&db_label(value)])),
         };
         let fraction = control.fraction(value).clamp(0., 1.);
@@ -566,7 +645,7 @@ impl EqualizerDialog {
             face_light: cx.global::<ChromeTones>().lifted,
             face_dark: theme.secondary,
         };
-        let bounds = self.knobs[usize::from(control == Control::Virtualizer)].clone();
+        let bounds = self.knobs[Self::knob_index(control)].clone();
         let dial = div()
             .relative()
             .size(px(KNOB_SIZE))
@@ -602,6 +681,61 @@ impl EqualizerDialog {
             .child(self.slider_stop(control, title.to_owned(), value_text, dial, cx).rounded_full())
             .child(div().pt(px(4.)).text_size(px(12.)).font_semibold().text_color(theme.muted_foreground).child(title))
     }
+
+    /// Reverb: an on/off row, then the room / damping / mix / predelay / width knobs while it is on.
+    fn reverb_section(&self, tone: &Tone, lit: Option<Control>, cx: &mut Context<Self>) -> Div {
+        let theme = cx.theme().clone();
+        let rv = tone.reverb;
+        let toggle = h_flex()
+            .w_full()
+            .items_center()
+            .gap(px(16.))
+            .child(
+                div()
+                    .flex_1()
+                    .text_size(px(14.))
+                    .font_semibold()
+                    .text_color(theme.foreground)
+                    .child(t(Str::SoundReverb)),
+            )
+            .child(compact_switch(rv.enabled, cx))
+            .id("eq-reverb-toggle")
+            .role(Role::Switch)
+            .aria_label(t(Str::SoundReverb))
+            .aria_toggled(if rv.enabled { Toggled::True } else { Toggled::False })
+            .cursor_pointer()
+            .on_click(cx.listener(|view, _, _, cx| {
+                let mut tone = view.playback.read(cx).effects.tone;
+                tone.reverb.enabled = !tone.reverb.enabled;
+                view.set_tone(tone, cx);
+            }));
+        let mut section =
+            v_flex().w_full().px(px(16.)).gap(px(8.)).child(self.focus.item(STOP_REVERB_TOGGLE, toggle, cx));
+        if rv.enabled {
+            section = section
+                .child(
+                    h_flex()
+                        .w_full()
+                        .justify_evenly()
+                        .child(self.knob(Control::ReverbRoom, rv.room, lit == Some(Control::ReverbRoom), cx))
+                        .child(self.knob(Control::ReverbDamp, rv.damp, lit == Some(Control::ReverbDamp), cx))
+                        .child(self.knob(Control::ReverbMix, rv.mix, lit == Some(Control::ReverbMix), cx)),
+                )
+                .child(
+                    h_flex()
+                        .w_full()
+                        .justify_evenly()
+                        .child(self.knob(
+                            Control::ReverbPredelay,
+                            rv.predelay_ms,
+                            lit == Some(Control::ReverbPredelay),
+                            cx,
+                        ))
+                        .child(self.knob(Control::ReverbWidth, rv.width, lit == Some(Control::ReverbWidth), cx)),
+                );
+        }
+        section
+    }
 }
 
 impl Render for EqualizerDialog {
@@ -635,7 +769,8 @@ impl Render for EqualizerDialog {
                     .justify_evenly()
                     .child(self.knob(Control::Bass, tone.bass_db, lit == Some(Control::Bass), cx))
                     .child(self.knob(Control::Virtualizer, tone.virtualizer, lit == Some(Control::Virtualizer), cx)),
-            );
+            )
+            .child(self.reverb_section(&tone, lit, cx));
         let reset = text_button("eq-reset", t(Str::SoundReset), false, true, cx);
         let ok = text_button("eq-ok", t(Str::SoundOk), true, true, cx);
         let buttons = h_flex()

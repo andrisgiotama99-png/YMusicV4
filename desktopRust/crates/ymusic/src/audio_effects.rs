@@ -2,12 +2,13 @@
 //! and applied to whichever engine plays.
 
 use ym_i18n::{Str, t};
-use ym_mse::Tone;
+use ym_mse::{Reverb, Tone};
 use ym_settings::SettingsStore;
 
 const SPEED_KEY: &str = "player.speed";
 const PITCH_KEY: &str = "player.pitch";
-/// bass, virtualizer, 10 bands, preamp: preamp last, so 12-value saves still load.
+/// bass, virtualizer, 10 bands, preamp, then reverb (enabled, room, damp, mix, predelay, width):
+/// appended last, so older 12/13-value saves still load.
 const EQ_KEY: &str = "player.eq";
 
 pub const SPEED_RANGE: (f32, f32) = (0.25, 4.0);
@@ -57,6 +58,16 @@ impl AudioEffects {
             if let Some(preamp) = saved.get(12) {
                 effects.tone.preamp_db = gain(*preamp);
             }
+            if let Some(active) = saved.get(13) {
+                effects.tone.reverb = Reverb {
+                    enabled: *active > 0.5,
+                    room: saved.get(14).copied().unwrap_or(0.5).clamp(0.0, 1.0),
+                    damp: saved.get(15).copied().unwrap_or(0.5).clamp(0.0, 1.0),
+                    mix: saved.get(16).copied().unwrap_or(0.3).clamp(0.0, 1.0),
+                    predelay_ms: saved.get(17).copied().unwrap_or(20.0).clamp(0.0, 200.0),
+                    width: saved.get(18).copied().unwrap_or(1.0).clamp(0.0, 1.0),
+                };
+            }
         }
         effects
     }
@@ -66,10 +77,28 @@ impl AudioEffects {
         let tone = &self.tone;
         let float = |value: f32| ym_settings::kotlin_float(value);
         let bands = tone.eq_db.iter().copied().map(float).collect::<Vec<_>>().join(",");
+        let rv = &tone.reverb;
+        let reverb = format!(
+            "{},{},{},{},{},{}",
+            if rv.enabled { "1" } else { "0" },
+            float(rv.room),
+            float(rv.damp),
+            float(rv.mix),
+            float(rv.predelay_ms),
+            float(rv.width),
+        );
         [
             (SPEED_KEY, float(self.speed)),
             (PITCH_KEY, float(self.pitch)),
-            (EQ_KEY, format!("{},{},{bands},{}", float(tone.bass_db), float(tone.virtualizer), float(tone.preamp_db))),
+            (
+                EQ_KEY,
+                format!(
+                    "{},{},{bands},{},{reverb}",
+                    float(tone.bass_db),
+                    float(tone.virtualizer),
+                    float(tone.preamp_db)
+                ),
+            ),
         ]
     }
 }

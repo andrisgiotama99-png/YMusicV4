@@ -15,6 +15,37 @@ pub use local::{AvStream, Cue, LocalAv, StreamKind};
 /// EQ bands' centre frequencies, Hz.
 pub const EQ_BANDS_HZ: [u32; 10] = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
 
+/// Freeverb reverb on the wet send only; mirrors the Kotlin `ReverbConfig`.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Reverb {
+    pub enabled: bool,
+    pub room: f32,
+    pub damp: f32,
+    pub mix: f32,
+    pub predelay_ms: f32,
+    pub width: f32,
+}
+
+impl Default for Reverb {
+    fn default() -> Self {
+        Self { enabled: false, room: 0.5, damp: 0.5, mix: 0.3, predelay_ms: 20.0, width: 1.0 }
+    }
+}
+
+impl Reverb {
+    /// The C parameter vector for `audio_fx_set_reverb`: active, room, damp, mix, predelay ms, width.
+    pub(crate) fn params(&self) -> [f32; 6] {
+        [
+            if self.enabled { 1.0 } else { 0.0 },
+            self.room.clamp(0.0, 1.0),
+            self.damp.clamp(0.0, 1.0),
+            self.mix.clamp(0.0, 1.0),
+            self.predelay_ms.clamp(0.0, 200.0),
+            self.width.clamp(0.0, 1.0),
+        ]
+    }
+}
+
 /// The in-app tone shaping both engines apply (`audio_fx.c`).
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Tone {
@@ -25,11 +56,12 @@ pub struct Tone {
     pub virtualizer: f32,
     /// Level trim on top of the automatic loudness pre-gain, -12..=12 dB.
     pub preamp_db: f32,
+    pub reverb: Reverb,
 }
 
 impl Default for Tone {
     fn default() -> Self {
-        Self { eq_db: [0.0; 10], bass_db: 0.0, virtualizer: 1.0, preamp_db: 0.0 }
+        Self { eq_db: [0.0; 10], bass_db: 0.0, virtualizer: 1.0, preamp_db: 0.0, reverb: Reverb::default() }
     }
 }
 
@@ -49,6 +81,7 @@ unsafe extern "C" {
     fn mse_host_set_bass(host: *mut c_void, db: f32);
     fn mse_host_set_virtualizer(host: *mut c_void, width: f32);
     fn mse_host_set_preamp(host: *mut c_void, db: f32);
+    fn mse_host_set_reverb(host: *mut c_void, params: *const f32);
     fn mse_host_set_video_hidden(host: *mut c_void, hidden: c_int);
     fn mse_host_pcm_levels(host: *mut c_void, out: *mut f32, count: c_int) -> c_int;
     fn mse_host_samples_played(host: *mut c_void) -> i64;
@@ -309,6 +342,7 @@ impl MseHost {
             mse_host_set_bass(self.raw, tone.bass_db);
             mse_host_set_virtualizer(self.raw, tone.virtualizer);
             mse_host_set_preamp(self.raw, tone.preamp_db);
+            mse_host_set_reverb(self.raw, tone.reverb.params().as_ptr());
         }
     }
 
