@@ -16,6 +16,12 @@
 #define AFX_LIMIT_ABSORB_DB 6.f
 #define AFX_MAKEUP_DB 3.f
 #define AFX_GRID 48
+#define AFX_RV_COMBS 8
+#define AFX_RV_APS 4
+#define AFX_RV_PRE_MAX_MS 200.f
+#define AFX_RV_GAIN 0.015f
+#define AFX_RV_SPREAD 23
+#define AFX_RV_SMOOTH_S 0.03f
 #define PI 3.14159265358979323846f
 
 typedef struct {
@@ -66,11 +72,31 @@ struct AudioFx {
     int vis_w;
     int vis_n;
     float vis_hold[AFX_LEVELS];
+    /* Freeverb reverb, wet send only. Channel 1's delays carry rv_spread_n extra samples. */
+    int rv_active;
+    float rv_room, rv_damp, rv_mix, rv_pre_ms, rv_width;
+    float rv_feedback, rv_damp1, rv_damp2, rv_wet1, rv_wet2, rv_dry;
+    float rv_wet1_cur, rv_wet2_cur, rv_dry_cur, rv_smooth;
+    int rv_on;
+    int rv_spread_n;
+    int rv_comb_n[AFX_RV_COMBS];
+    int rv_ap_n[AFX_RV_APS];
+    float *rv_comb[2][AFX_RV_COMBS];
+    int rv_comb_i[2][AFX_RV_COMBS];
+    float rv_comb_store[2][AFX_RV_COMBS];
+    float *rv_ap[2][AFX_RV_APS];
+    int rv_ap_i[2][AFX_RV_APS];
+    float *rv_pre[2];
+    int rv_pre_n, rv_pre_use, rv_pre_i;
 };
 
 static const float k_hz[AFX_BANDS] = {
     31.f, 62.f, 125.f, 250.f, 500.f, 1000.f, 2000.f, 4000.f, 8000.f, 16000.f,
 };
+
+/* Freeverb comb / allpass delay lengths in samples at 44.1 kHz; scaled to the host rate. */
+static const int k_comb[AFX_RV_COMBS] = {1116, 1188, 1277, 1356, 1422, 1491, 1557, 1617};
+static const int k_ap[AFX_RV_APS] = {556, 441, 341, 225};
 
 static float clampf(float x, float lo, float hi)
 {
@@ -199,6 +225,129 @@ static void chain_gain_db(const AudioFx *fx, float fs, float *loudness, float *m
     *max_boost = worst;
 }
 
+static void rv_free_buffers(AudioFx *fx)
+{
+    int c, k;
+    for (c = 0; c < 2; c++) {
+        for (k = 0; k < AFX_RV_COMBS; k++) {
+            free(fx->rv_comb[c][k]);
+            fx->rv_comb[c][k] = NULL;
+        }
+        for (k = 0; k < AFX_RV_APS; k++) {
+            free(fx->rv_ap[c][k]);
+            fx->rv_ap[c][k] = NULL;
+        }
+        free(fx->rv_pre[c]);
+        fx->rv_pre[c] = NULL;
+    }
+}
+
+static void rv_clear_state(AudioFx *fx)
+{
+    int c, k;
+    for (c = 0; c < 2; c++) {
+        int spread = c ? fx->rv_spread_n : 0;
+        for (k = 0; k < AFX_RV_COMBS; k++) {
+            if (fx->rv_comb[c][k])
+                memset(fx->rv_comb[c][k], 0, (size_t)(fx->rv_comb_n[k] + spread) * sizeof(float));
+            fx->rv_comb_i[c][k] = 0;
+            fx->rv_comb_store[c][k] = 0.f;
+        }
+        for (k = 0; k < AFX_RV_APS; k++) {
+            if (fx->rv_ap[c][k])
+                memset(fx->rv_ap[c][k], 0, (size_t)(fx->rv_ap_n[k] + spread) * sizeof(float));
+            fx->rv_ap_i[c][k] = 0;
+        }
+        if (fx->rv_pre[c])
+            memset(fx->rv_pre[c], 0, (size_t)fx->rv_pre_n * sizeof(float));
+    }
+    fx->rv_pre_i = 0;
+    fx->rv_wet1_cur = fx->rv_wet1;
+    fx->rv_wet2_cur = fx->rv_wet2;
+    fx->rv_dry_cur = fx->rv_dry;
+}
+
+/* Call with fx->mu held. Maps the user params onto the tank coefficients for the current rate. */
+static void rv_derive(AudioFx *fx)
+{
+    float fs = (float)(fx->rate > 0 ? fx->rate : 48000);
+    fx->rv_feedback = fx->rv_room * 0.28f + 0.7f;
+    fx->rv_damp1 = fx->rv_damp * 0.4f;
+    fx->rv_damp2 = 1.f - fx->rv_damp1;
+    fx->rv_dry = 1.f - fx->rv_mix;
+    fx->rv_wet1 = fx->rv_mix * (fx->rv_width / 2.f + 0.5f);
+    fx->rv_wet2 = fx->rv_mix * ((1.f - fx->rv_width) / 2.f);
+    fx->rv_smooth = 1.f - expf(-1.f / (AFX_RV_SMOOTH_S * fs));
+    fx->rv_pre_use = (int)(fx->rv_pre_ms * fs / 1000.f + 0.5f);
+    if (fx->rv_pre_use > fx->rv_pre_n)
+        fx->rv_pre_use = fx->rv_pre_n;
+    if (fx->rv_pre_use < 0)
+        fx->rv_pre_use = 0;
+    fx->rv_on = fx->rv_active && fx->rv_mix > 0.001f;
+}
+
+/* (Re)allocate the delay lines for the current rate and clear them. Call with fx->mu held. */
+static void rv_alloc(AudioFx *fx)
+{
+    int c, k;
+    float fs = (float)(fx->rate > 0 ? fx->rate : 48000);
+    float scale = fs / 44100.f;
+    rv_free_buffers(fx);
+    fx->rv_spread_n = (int)(AFX_RV_SPREAD * scale + 0.5f);
+    for (k = 0; k < AFX_RV_COMBS; k++)
+        fx->rv_comb_n[k] = (int)(k_comb[k] * scale + 0.5f);
+    for (k = 0; k < AFX_RV_APS; k++)
+        fx->rv_ap_n[k] = (int)(k_ap[k] * scale + 0.5f);
+    fx->rv_pre_n = (int)(AFX_RV_PRE_MAX_MS * fs / 1000.f + 0.5f);
+    if (fx->rv_pre_n < 1)
+        fx->rv_pre_n = 1;
+    for (c = 0; c < 2; c++) {
+        int spread = c ? fx->rv_spread_n : 0;
+        for (k = 0; k < AFX_RV_COMBS; k++)
+            fx->rv_comb[c][k] = (float *)calloc((size_t)(fx->rv_comb_n[k] + spread), sizeof(float));
+        for (k = 0; k < AFX_RV_APS; k++)
+            fx->rv_ap[c][k] = (float *)calloc((size_t)(fx->rv_ap_n[k] + spread), sizeof(float));
+        fx->rv_pre[c] = (float *)calloc((size_t)fx->rv_pre_n, sizeof(float));
+    }
+    rv_clear_state(fx);
+}
+
+/* One sample through channel c's 8 damped combs then 4 allpass diffusers. Call with fx->mu held. */
+static float rv_tick(AudioFx *fx, int c, float in)
+{
+    int k;
+    float acc = 0.f;
+    float x = in * AFX_RV_GAIN;
+    int spread = c ? fx->rv_spread_n : 0;
+    for (k = 0; k < AFX_RV_COMBS; k++) {
+        int n = fx->rv_comb_n[k] + spread;
+        int i = fx->rv_comb_i[c][k];
+        float out = fx->rv_comb[c][k][i];
+        float store = out * fx->rv_damp2 + fx->rv_comb_store[c][k] * fx->rv_damp1;
+        /* Flush denormals: a decaying tail must not drag the audio thread into slow subnormal math. */
+        if (fabsf(store) < 1e-12f)
+            store = 0.f;
+        fx->rv_comb_store[c][k] = store;
+        fx->rv_comb[c][k][i] = x + store * fx->rv_feedback;
+        if (++i >= n)
+            i = 0;
+        fx->rv_comb_i[c][k] = i;
+        acc += out;
+    }
+    for (k = 0; k < AFX_RV_APS; k++) {
+        int n = fx->rv_ap_n[k] + spread;
+        int i = fx->rv_ap_i[c][k];
+        float bufout = fx->rv_ap[c][k][i];
+        float out = bufout - acc;
+        fx->rv_ap[c][k][i] = acc + bufout * 0.5f;
+        if (++i >= n)
+            i = 0;
+        fx->rv_ap_i[c][k] = i;
+        acc = out;
+    }
+    return acc;
+}
+
 /* Call with fx->mu held (or before the instance is shared). */
 static void rebuild(AudioFx *fx)
 {
@@ -226,6 +375,9 @@ static void rebuild(AudioFx *fx)
         fx->color_on = 1;
     if (fabsf(fx->volume - 1.f) >= 0.001f)
         fx->color_on = 1;
+    rv_derive(fx);
+    if (fx->rv_on)
+        fx->color_on = 1;
 }
 
 AudioFx *audio_fx_create(void)
@@ -243,6 +395,7 @@ AudioFx *audio_fx_create(void)
         free(fx);
         return NULL;
     }
+    rv_alloc(fx);
     rebuild(fx);
     return fx;
 }
@@ -272,6 +425,7 @@ void audio_fx_destroy(AudioFx *fx)
     fx->mid = NULL;
     free(fx->xf);
     fx->xf = NULL;
+    rv_free_buffers(fx);
     pthread_mutex_unlock(&fx->mu);
     pthread_mutex_destroy(&fx->mu);
     free(fx);
@@ -292,6 +446,7 @@ void audio_fx_reset(AudioFx *fx)
     memset(fx->vis_hold, 0, sizeof(fx->vis_hold));
     fx->vis_w = 0;
     fx->vis_n = 0;
+    rv_clear_state(fx);
     pthread_mutex_unlock(&fx->mu);
 }
 
@@ -306,6 +461,7 @@ void audio_fx_set_rate(AudioFx *fx, int rate)
         return;
     }
     fx->rate = rate;
+    rv_alloc(fx);
     rebuild(fx);
     for (i = 0; i < AFX_BANDS; i++)
         bq_clear(&fx->peak[i]);
@@ -352,6 +508,38 @@ void audio_fx_set_virtualizer(AudioFx *fx, float width)
         return;
     pthread_mutex_lock(&fx->mu);
     fx->width = clampf(width, 0.f, 2.f);
+    rebuild(fx);
+    pthread_mutex_unlock(&fx->mu);
+}
+
+void audio_fx_set_reverb(AudioFx *fx, const float params[AFX_REVERB_PARAMS])
+{
+    int was_on, c;
+    float old_pre;
+    if (!fx || !params)
+        return;
+    pthread_mutex_lock(&fx->mu);
+    was_on = fx->rv_on;
+    old_pre = fx->rv_pre_ms;
+    fx->rv_active = params[0] > 0.5f;
+    fx->rv_room = clampf(params[1], 0.f, 1.f);
+    fx->rv_damp = clampf(params[2], 0.f, 1.f);
+    fx->rv_mix = clampf(params[3], 0.f, 1.f);
+    fx->rv_pre_ms = clampf(params[4], 0.f, AFX_RV_PRE_MAX_MS);
+    fx->rv_width = clampf(params[5], 0.f, 1.f);
+    rv_derive(fx);
+    if (fabsf(old_pre - fx->rv_pre_ms) >= 0.5f) {
+        for (c = 0; c < 2; c++)
+            if (fx->rv_pre[c])
+                memset(fx->rv_pre[c], 0, (size_t)fx->rv_pre_n * sizeof(float));
+        fx->rv_pre_i = 0;
+    }
+    /* Entering from off: start at the target balance so the dry path never dips while the tank fills. */
+    if (!was_on && fx->rv_on) {
+        fx->rv_wet1_cur = fx->rv_wet1;
+        fx->rv_wet2_cur = fx->rv_wet2;
+        fx->rv_dry_cur = fx->rv_dry;
+    }
     rebuild(fx);
     pthread_mutex_unlock(&fx->mu);
 }
@@ -518,6 +706,36 @@ void audio_fx_color(AudioFx *fx, int16_t *s16, int frames, int ch)
             l = bq_tick(&fx->bass, 0, l);
             if (nch > 1)
                 r = bq_tick(&fx->bass, 1, r);
+            if (fx->rv_on) {
+                float tl, tr, preL, preR;
+                int use = fx->rv_pre_use;
+                if (use > 0) {
+                    int ri = fx->rv_pre_i - use;
+                    if (ri < 0)
+                        ri += fx->rv_pre_n;
+                    preL = fx->rv_pre[0][ri];
+                    preR = nch > 1 ? fx->rv_pre[1][ri] : preL;
+                    fx->rv_pre[0][fx->rv_pre_i] = l;
+                    if (nch > 1)
+                        fx->rv_pre[1][fx->rv_pre_i] = r;
+                    if (++fx->rv_pre_i >= fx->rv_pre_n)
+                        fx->rv_pre_i = 0;
+                } else {
+                    preL = l;
+                    preR = r;
+                }
+                tl = rv_tick(fx, 0, preL);
+                tr = nch > 1 ? rv_tick(fx, 1, preR) : tl;
+                fx->rv_wet1_cur += (fx->rv_wet1 - fx->rv_wet1_cur) * fx->rv_smooth;
+                fx->rv_wet2_cur += (fx->rv_wet2 - fx->rv_wet2_cur) * fx->rv_smooth;
+                fx->rv_dry_cur += (fx->rv_dry - fx->rv_dry_cur) * fx->rv_smooth;
+                if (nch > 1) {
+                    l = l * fx->rv_dry_cur + tl * fx->rv_wet1_cur + tr * fx->rv_wet2_cur;
+                    r = r * fx->rv_dry_cur + tr * fx->rv_wet1_cur + tl * fx->rv_wet2_cur;
+                } else {
+                    l = l * fx->rv_dry_cur + tl * (fx->rv_wet1_cur + fx->rv_wet2_cur);
+                }
+            }
             if (nch > 1 && fabsf(fx->width - 1.f) >= 0.02f) {
                 mid = 0.5f * (l + r);
                 side = 0.5f * (l - r) * fx->width;
