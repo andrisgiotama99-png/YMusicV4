@@ -204,6 +204,7 @@ internal class JvmLocalPlayer(
             FileAvNative.setBass(handle, config.bassBoostDb)
             FileAvNative.setVirtualizer(handle, config.virtualizer)
             FileAvNative.setPreamp(handle, config.preampDb)
+            FileAvNative.setReverb(handle, reverbParams(config.reverb))
             val opened = FileAvNative.open(handle, path) == 0
             if (gen != loadGen.get()) return@dispatch
             if (!opened) {
@@ -330,15 +331,18 @@ internal class JvmLocalPlayer(
             dispatch { if (handle != 0L) FileAvNative.setPitch(handle, config.pitchFactor.toDouble()) }
         }
         if (config.eqBands != prev.eqBands || config.bassBoostDb != prev.bassBoostDb ||
-            config.virtualizer != prev.virtualizer || config.preampDb != prev.preampDb
+            config.virtualizer != prev.virtualizer || config.preampDb != prev.preampDb ||
+            config.reverb != prev.reverb
         ) {
             val bands = FloatArray(10) { i -> config.eqBands.getOrElse(i) { 0f } }
+            val reverb = reverbParams(config.reverb)
             dispatch {
                 if (handle != 0L) {
                     FileAvNative.setEq(handle, bands)
                     FileAvNative.setBass(handle, config.bassBoostDb)
                     FileAvNative.setVirtualizer(handle, config.virtualizer)
                     FileAvNative.setPreamp(handle, config.preampDb)
+                    FileAvNative.setReverb(handle, reverb)
                 }
             }
         }
@@ -767,3 +771,13 @@ private fun parseAvStream(line: String): AvStreamRow? {
         codec = p[5],
     )
 }
+
+private fun reverbParams(rv: ReverbConfig): FloatArray =
+    floatArrayOf(
+        if (rv.enabled) 1f else 0f,
+        rv.room.coerceIn(0f, 1f),
+        rv.damp.coerceIn(0f, 1f),
+        rv.mix.coerceIn(0f, 1f),
+        rv.predelayMs.coerceIn(0f, 200f),
+        rv.width.coerceIn(0f, 1f),
+    )

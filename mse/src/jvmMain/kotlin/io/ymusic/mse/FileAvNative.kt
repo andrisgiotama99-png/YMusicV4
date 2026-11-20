@@ -52,6 +52,8 @@ object FileAvNative {
 
     @JvmStatic external fun setPreamp(handle: Long, db: Float)
 
+    @JvmStatic external fun setReverb(handle: Long, params: FloatArray)
+
     @JvmStatic external fun setAudioIndex(handle: Long, index: Int)
 
     /** -1 turns captions off. [index] is the file stream index (`streams()` kind=2). */

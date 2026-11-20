@@ -2076,6 +2076,12 @@ void file_av_set_virtualizer(FileAv *p, float width)
         audio_fx_set_virtualizer(p->fx, width);
 }
 
+void file_av_set_reverb(FileAv *p, const float params[6])
+{
+    if (p && p->fx)
+        audio_fx_set_reverb(p->fx, params);
+}
+
 double file_av_duration(FileAv *p)
 {
     double d;
