@@ -682,4 +682,10 @@
     <string name="downloads_cancel_selected_message">これまでにダウンロードしたデータは削除されます。</string>
     <string name="downloads_cancel_selected_keep">キャンセルしない</string>
     <string name="data_dir_unusable">YMusic はデータフォルダ（%1$s）を開けません。書き込み可能なフォルダであることを確認してから、YMusic をもう一度開いてください。(%2$s)</string>
+    <string name="sound_reverb">リバーブ</string>
+    <string name="sound_reverb_room">ルームサイズ</string>
+    <string name="sound_reverb_damp">ダンピング</string>
+    <string name="sound_reverb_mix">ミックス</string>
+    <string name="sound_reverb_predelay">プリディレイ</string>
+    <string name="sound_reverb_width">幅</string>
 </resources>

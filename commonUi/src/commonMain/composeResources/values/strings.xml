@@ -851,4 +851,10 @@
     <string name="downloads_cancel_selected_message">What was downloaded so far is deleted.</string>
     <string name="downloads_cancel_selected_keep">Keep</string>
     <string name="data_dir_unusable">YMusic can't open its data folder, %1$s. Make sure it's a folder you can write to, then open YMusic again. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Room size</string>
+    <string name="sound_reverb_damp">Damping</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predelay</string>
+    <string name="sound_reverb_width">Width</string>
 </resources>

@@ -721,4 +721,10 @@
     <string name="downloads_cancel_selected_message">Dotąd pobrane dane zostaną usunięte.</string>
     <string name="downloads_cancel_selected_keep">Zachowaj</string>
     <string name="data_dir_unusable">YMusic nie może otworzyć swojego folderu danych, %1$s. Upewnij się, że to folder, w którym możesz zapisywać, a następnie ponownie otwórz YMusic. (%2$s)</string>
+    <string name="sound_reverb">Pogłos</string>
+    <string name="sound_reverb_room">Rozmiar pomieszczenia</string>
+    <string name="sound_reverb_damp">Tłumienie</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predelay</string>
+    <string name="sound_reverb_width">Szerokość</string>
 </resources>

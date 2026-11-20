@@ -708,4 +708,10 @@
     <string name="downloads_cancel_selected_message">Досад преузети садржај биће избрисан.</string>
     <string name="downloads_cancel_selected_keep">Задржи</string>
     <string name="data_dir_unusable">YMusic не може да отвори своју фасциклу са подацима, %1$s. Проверите да ли је то фасцикла у коју можете да уписујете, па поново отворите YMusic. (%2$s)</string>
+    <string name="sound_reverb">Реверб</string>
+    <string name="sound_reverb_room">Величина просторије</string>
+    <string name="sound_reverb_damp">Пригушење</string>
+    <string name="sound_reverb_mix">Микс</string>
+    <string name="sound_reverb_predelay">Предкашњење</string>
+    <string name="sound_reverb_width">Ширина</string>
 </resources>

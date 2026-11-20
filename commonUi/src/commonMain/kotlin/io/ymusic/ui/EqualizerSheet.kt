@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -62,6 +65,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.ymusic.player.ReverbConfig
 import io.ymusic.settings.AppSettings
 import io.ymusic.ui.resources.Res
 import io.ymusic.ui.resources.a11y_eq_preamp
@@ -238,6 +242,12 @@ internal fun EqualizerFxSheet(graph: AppGraph, onDismiss: () -> Unit) {
                     onChange = { player.setVirtualizer(virtualizerWidth(it)) },
                 )
             }
+            ReverbSection(
+                reverb = config.reverb,
+                enabled = enabled,
+                onChange = { player.setReverb(it) },
+                modifier = controls,
+            )
         }
     }
 }
@@ -682,3 +692,78 @@ internal fun eqPresetLabel(eqBands: List<Float>): StringResource {
 
 private fun bandsMatch(a: List<Float>, b: List<Float>): Boolean =
     a.size == b.size && a.indices.all { abs(a[it] - b[it]) < 0.2f }
+
+/** Reverb: an on/off row, then room / damping / mix / predelay / width knobs while it is on. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ReverbSection(
+    reverb: ReverbConfig,
+    enabled: Boolean,
+    onChange: (ReverbConfig) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier.fillMaxWidth().padding(horizontal = DesignSpacing.Space16)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .toggleable(value = reverb.enabled, role = Role.Switch) { if (enabled) onChange(reverb.copy(enabled = it)) },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Text(
+                stringResource(Res.string.sound_reverb),
+                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = DesignColors.Ink),
+                modifier = Modifier.weight(1f),
+            )
+            CompactSwitch(reverb.enabled)
+        }
+        if (reverb.enabled) {
+            FlowRow(
+                Modifier.fillMaxWidth().padding(top = DesignSpacing.Space8),
+                horizontalArrangement = Arrangement.spacedBy(DesignSpacing.Space8),
+                verticalArrangement = Arrangement.spacedBy(DesignSpacing.Space8),
+            ) {
+                RotaryKnob(
+                    enabled = enabled,
+                    title = stringResource(Res.string.sound_reverb_room),
+                    fraction = reverb.room,
+                    valueText = "${(reverb.room * 100).roundToInt()}%",
+                    keyStep = 0.05f,
+                    onChange = { onChange(reverb.copy(room = it)) },
+                )
+                RotaryKnob(
+                    enabled = enabled,
+                    title = stringResource(Res.string.sound_reverb_damp),
+                    fraction = reverb.damp,
+                    valueText = "${(reverb.damp * 100).roundToInt()}%",
+                    keyStep = 0.05f,
+                    onChange = { onChange(reverb.copy(damp = it)) },
+                )
+                RotaryKnob(
+                    enabled = enabled,
+                    title = stringResource(Res.string.sound_reverb_mix),
+                    fraction = reverb.mix,
+                    valueText = "${(reverb.mix * 100).roundToInt()}%",
+                    keyStep = 0.05f,
+                    onChange = { onChange(reverb.copy(mix = it)) },
+                )
+                RotaryKnob(
+                    enabled = enabled,
+                    title = stringResource(Res.string.sound_reverb_predelay),
+                    fraction = reverb.predelayMs / 200f,
+                    valueText = "${reverb.predelayMs.roundToInt()} ms",
+                    keyStep = 0.05f,
+                    onChange = { onChange(reverb.copy(predelayMs = it * 200f)) },
+                )
+                RotaryKnob(
+                    enabled = enabled,
+                    title = stringResource(Res.string.sound_reverb_width),
+                    fraction = reverb.width,
+                    valueText = "${(reverb.width * 100).roundToInt()}%",
+                    keyStep = 0.05f,
+                    onChange = { onChange(reverb.copy(width = it)) },
+                )
+            }
+        }
+    }
+}

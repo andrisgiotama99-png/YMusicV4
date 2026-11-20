@@ -695,4 +695,10 @@
     <string name="downloads_cancel_selected_message">Şimdiye kadar indirilenler silinecek.</string>
     <string name="downloads_cancel_selected_keep">Koru</string>
     <string name="data_dir_unusable">YMusic veri klasörünü (%1$s) açamıyor. Bunun yazabildiğiniz bir klasör olduğundan emin olun, ardından YMusic'i yeniden açın. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Oda boyutu</string>
+    <string name="sound_reverb_damp">Sönümleme</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Ön gecikme</string>
+    <string name="sound_reverb_width">Genişlik</string>
 </resources>

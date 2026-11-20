@@ -695,4 +695,10 @@
     <string name="downloads_cancel_selected_message">Seni alla laaditu kustutatakse.</string>
     <string name="downloads_cancel_selected_keep">Jäta alles</string>
     <string name="data_dir_unusable">YMusic ei saa avada oma andmekausta %1$s. Veendu, et see on kaust, kuhu saad kirjutada, ja ava YMusic uuesti. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Ruumi suurus</string>
+    <string name="sound_reverb_damp">Summutus</string>
+    <string name="sound_reverb_mix">Miks</string>
+    <string name="sound_reverb_predelay">Eelviide</string>
+    <string name="sound_reverb_width">Laius</string>
 </resources>

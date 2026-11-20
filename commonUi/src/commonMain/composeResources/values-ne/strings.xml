@@ -695,4 +695,10 @@
     <string name="downloads_cancel_selected_message">अहिलेसम्म डाउनलोड भएको भाग मेटाइनेछ।</string>
     <string name="downloads_cancel_selected_keep">राख्नुहोस्</string>
     <string name="data_dir_unusable">YMusic ले आफ्नो डेटा फोल्डर, %1$s, खोल्न सक्दैन। यो तपाईंले लेख्न सक्ने फोल्डर हो भनी सुनिश्चित गर्नुहोस्, त्यसपछि YMusic फेरि खोल्नुहोस्। (%2$s)</string>
+    <string name="sound_reverb">रिभर्ब</string>
+    <string name="sound_reverb_room">कोठाको आकार</string>
+    <string name="sound_reverb_damp">ड्याम्पिङ</string>
+    <string name="sound_reverb_mix">मिक्स</string>
+    <string name="sound_reverb_predelay">प्रिडिले</string>
+    <string name="sound_reverb_width">चौडाइ</string>
 </resources>

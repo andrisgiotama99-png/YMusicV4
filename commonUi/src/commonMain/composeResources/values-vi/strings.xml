@@ -803,4 +803,10 @@
     <string name="downloads_cancel_selected_message">Phần đã tải xuống đến nay sẽ bị xóa.</string>
     <string name="downloads_cancel_selected_keep">Giữ lại</string>
     <string name="data_dir_unusable">YMusic không thể mở thư mục dữ liệu của ứng dụng, %1$s. Hãy đảm bảo đó là thư mục bạn có thể ghi vào, rồi mở lại YMusic. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Kích thước phòng</string>
+    <string name="sound_reverb_damp">Giảm chấn</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predelay</string>
+    <string name="sound_reverb_width">Độ rộng</string>
 </resources>

@@ -695,4 +695,10 @@
     <string name="downloads_cancel_selected_message">İndiyədək yüklənənlər silinəcək.</string>
     <string name="downloads_cancel_selected_keep">Saxla</string>
     <string name="data_dir_unusable">YMusic məlumat qovluğunu (%1$s) aça bilmir. Bunun yaza biləcəyiniz qovluq olduğuna əmin olun, sonra YMusic-i yenidən açın. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Otaq ölçüsü</string>
+    <string name="sound_reverb_damp">Söndürmə</string>
+    <string name="sound_reverb_mix">Qarışıq</string>
+    <string name="sound_reverb_predelay">Ön gecikmə</string>
+    <string name="sound_reverb_width">En</string>
 </resources>

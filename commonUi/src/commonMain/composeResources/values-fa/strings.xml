@@ -695,4 +695,10 @@
     <string name="downloads_cancel_selected_message">آنچه تاکنون دانلود شده حذف می‌شود.</string>
     <string name="downloads_cancel_selected_keep">نگه داشتن</string>
     <string name="data_dir_unusable">YMusic نمی‌تواند پوشهٔ داده‌های خود، %1$s، را باز کند. مطمئن شوید که پوشه‌ای است که می‌توانید در آن بنویسید، سپس دوباره YMusic را باز کنید. (%2$s)</string>
+    <string name="sound_reverb">ریورب</string>
+    <string name="sound_reverb_room">اندازه اتاق</string>
+    <string name="sound_reverb_damp">میرایی</string>
+    <string name="sound_reverb_mix">میکس</string>
+    <string name="sound_reverb_predelay">پیش‌تاخیر</string>
+    <string name="sound_reverb_width">عرض</string>
 </resources>

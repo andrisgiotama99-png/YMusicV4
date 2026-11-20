@@ -695,4 +695,10 @@
     <string name="downloads_cancel_selected_message">Buburahin ang na-download na sa ngayon.</string>
     <string name="downloads_cancel_selected_keep">Panatilihin</string>
     <string name="data_dir_unusable">Hindi mabuksan ng YMusic ang data folder nito, %1$s. Tiyaking folder ito na kaya mong sulatan, pagkatapos ay buksan muli ang YMusic. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Laki ng kwarto</string>
+    <string name="sound_reverb_damp">Pagpapahina</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predelay</string>
+    <string name="sound_reverb_width">Lapad</string>
 </resources>

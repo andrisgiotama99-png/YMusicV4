@@ -708,4 +708,10 @@
     <string name="downloads_cancel_selected_message">מה שהורד עד עכשיו יימחק.</string>
     <string name="downloads_cancel_selected_keep">להשאיר</string>
     <string name="data_dir_unusable">YMusic לא יכולה לפתוח את תיקיית הנתונים שלה, %1$s. ודא שזו תיקייה שאפשר לכתוב בה, ואז פתח שוב את YMusic. (%2$s)</string>
+    <string name="sound_reverb">ריוורב</string>
+    <string name="sound_reverb_room">גודל חדר</string>
+    <string name="sound_reverb_damp">ריסון</string>
+    <string name="sound_reverb_mix">מיקס</string>
+    <string name="sound_reverb_predelay">השהיה מוקדמת</string>
+    <string name="sound_reverb_width">רוחב</string>
 </resources>

@@ -877,4 +877,10 @@
     <string name="downloads_cancel_selected_message">Уже завантажені дані буде видалено.</string>
     <string name="downloads_cancel_selected_keep">Залишити</string>
     <string name="data_dir_unusable">YMusic не вдається відкрити свою папку з даними %1$s. Переконайтеся, що це папка, у яку можна записувати, і знову відкрийте YMusic. (%2$s)</string>
+    <string name="sound_reverb">Реверберація</string>
+    <string name="sound_reverb_room">Розмір кімнати</string>
+    <string name="sound_reverb_damp">Демпфування</string>
+    <string name="sound_reverb_mix">Мікс</string>
+    <string name="sound_reverb_predelay">Передзатримка</string>
+    <string name="sound_reverb_width">Ширина</string>
 </resources>

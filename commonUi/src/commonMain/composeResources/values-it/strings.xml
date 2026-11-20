@@ -708,4 +708,10 @@
     <string name="downloads_cancel_selected_message">Quanto scaricato finora verrà eliminato.</string>
     <string name="downloads_cancel_selected_keep">Mantieni</string>
     <string name="data_dir_unusable">YMusic non riesce ad aprire la sua cartella dei dati, %1$s. Assicurati che sia una cartella in cui puoi scrivere, poi riapri YMusic. (%2$s)</string>
+    <string name="sound_reverb">Riverbero</string>
+    <string name="sound_reverb_room">Dimensione stanza</string>
+    <string name="sound_reverb_damp">Smorzamento</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predelay</string>
+    <string name="sound_reverb_width">Larghezza</string>
 </resources>

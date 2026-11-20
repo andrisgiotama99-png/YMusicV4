@@ -708,4 +708,10 @@
     <string name="downloads_cancel_selected_message">O que foi baixado até agora será excluído.</string>
     <string name="downloads_cancel_selected_keep">Manter</string>
     <string name="data_dir_unusable">O YMusic não consegue abrir sua pasta de dados, %1$s. Verifique se é uma pasta na qual você pode gravar e abra o YMusic novamente. (%2$s)</string>
+    <string name="sound_reverb">Reverberação</string>
+    <string name="sound_reverb_room">Tamanho da sala</string>
+    <string name="sound_reverb_damp">Amortecimento</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predelay</string>
+    <string name="sound_reverb_width">Largura</string>
 </resources>
