@@ -883,4 +883,7 @@
     <string name="sound_reverb_mix">Мікс</string>
     <string name="sound_reverb_predelay">Передзатримка</string>
     <string name="sound_reverb_width">Ширина</string>
+    <string name="sound_reverb_preset_room">Кімната</string>
+    <string name="sound_reverb_preset_hall">Зала</string>
+    <string name="sound_reverb_preset_plate">Пластина</string>
 </resources>

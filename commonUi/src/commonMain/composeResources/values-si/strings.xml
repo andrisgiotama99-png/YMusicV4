@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">මික්ස්</string>
     <string name="sound_reverb_predelay">ප්‍රීඩිලේ</string>
     <string name="sound_reverb_width">පළල</string>
+    <string name="sound_reverb_preset_room">කාමරය</string>
+    <string name="sound_reverb_preset_hall">ශාලාව</string>
+    <string name="sound_reverb_preset_plate">තහඩුව</string>
 </resources>

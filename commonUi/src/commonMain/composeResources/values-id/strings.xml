@@ -688,4 +688,7 @@
     <string name="sound_reverb_mix">Mix</string>
     <string name="sound_reverb_predelay">Predelay</string>
     <string name="sound_reverb_width">Lebar</string>
+    <string name="sound_reverb_preset_room">Ruang</string>
+    <string name="sound_reverb_preset_hall">Aula</string>
+    <string name="sound_reverb_preset_plate">Plate</string>
 </resources>

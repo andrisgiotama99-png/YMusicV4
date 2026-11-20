@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">Միքս</string>
     <string name="sound_reverb_predelay">Նախնական ուշացում</string>
     <string name="sound_reverb_width">Լայնություն</string>
+    <string name="sound_reverb_preset_room">Սենյակ</string>
+    <string name="sound_reverb_preset_hall">Դահլիճ</string>
+    <string name="sound_reverb_preset_plate">Սալիկ</string>
 </resources>

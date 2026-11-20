@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">میکس</string>
     <string name="sound_reverb_predelay">پیش‌تاخیر</string>
     <string name="sound_reverb_width">عرض</string>
+    <string name="sound_reverb_preset_room">اتاق</string>
+    <string name="sound_reverb_preset_hall">سالن</string>
+    <string name="sound_reverb_preset_plate">پلیت</string>
 </resources>

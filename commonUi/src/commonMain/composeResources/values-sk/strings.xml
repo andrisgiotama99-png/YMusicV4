@@ -727,4 +727,7 @@
     <string name="sound_reverb_mix">Mix</string>
     <string name="sound_reverb_predelay">Predoneskorenie</string>
     <string name="sound_reverb_width">Šírka</string>
+    <string name="sound_reverb_preset_room">Miestnosť</string>
+    <string name="sound_reverb_preset_hall">Sála</string>
+    <string name="sound_reverb_preset_plate">Doska</string>
 </resources>

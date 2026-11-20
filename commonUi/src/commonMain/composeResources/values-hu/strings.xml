@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">Mix</string>
     <string name="sound_reverb_predelay">Előző késleltetés</string>
     <string name="sound_reverb_width">Szélesség</string>
+    <string name="sound_reverb_preset_room">Szoba</string>
+    <string name="sound_reverb_preset_hall">Terem</string>
+    <string name="sound_reverb_preset_plate">Lemez</string>
 </resources>

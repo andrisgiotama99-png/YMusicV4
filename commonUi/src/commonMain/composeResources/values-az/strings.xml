@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">Qarışıq</string>
     <string name="sound_reverb_predelay">Ön gecikmə</string>
     <string name="sound_reverb_width">En</string>
+    <string name="sound_reverb_preset_room">Otaq</string>
+    <string name="sound_reverb_preset_hall">Zal</string>
+    <string name="sound_reverb_preset_plate">Plate</string>
 </resources>

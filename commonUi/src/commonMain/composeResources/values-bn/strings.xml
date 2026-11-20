@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">মিক্স</string>
     <string name="sound_reverb_predelay">প্রিডিলে</string>
     <string name="sound_reverb_width">প্রস্থ</string>
+    <string name="sound_reverb_preset_room">রুম</string>
+    <string name="sound_reverb_preset_hall">হল</string>
+    <string name="sound_reverb_preset_plate">প্লেট</string>
 </resources>

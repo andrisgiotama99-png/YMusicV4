@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">Nahasketa</string>
     <string name="sound_reverb_predelay">Aurre-atzerapena</string>
     <string name="sound_reverb_width">Zabalera</string>
+    <string name="sound_reverb_preset_room">Gela</string>
+    <string name="sound_reverb_preset_hall">Aretoa</string>
+    <string name="sound_reverb_preset_plate">Plaka</string>
 </resources>

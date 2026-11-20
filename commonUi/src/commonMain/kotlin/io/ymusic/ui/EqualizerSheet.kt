@@ -693,7 +693,76 @@ internal fun eqPresetLabel(eqBands: List<Float>): StringResource {
 private fun bandsMatch(a: List<Float>, b: List<Float>): Boolean =
     a.size == b.size && a.indices.all { abs(a[it] - b[it]) < 0.2f }
 
-/** Reverb: an on/off row, then room / damping / mix / predelay / width knobs while it is on. */
+private data class ReverbPreset(val label: StringResource, val config: ReverbConfig)
+
+private val REVERB_PRESETS = listOf(
+    ReverbPreset(Res.string.sound_reverb_preset_room, ReverbConfig(enabled = true, room = 0.35f, damp = 0.6f, mix = 0.25f, predelayMs = 10f, width = 0.8f)),
+    ReverbPreset(Res.string.sound_reverb_preset_hall, ReverbConfig(enabled = true, room = 0.75f, damp = 0.45f, mix = 0.35f, predelayMs = 40f, width = 1f)),
+    ReverbPreset(Res.string.sound_reverb_preset_plate, ReverbConfig(enabled = true, room = 0.85f, damp = 0.25f, mix = 0.4f, predelayMs = 5f, width = 1f)),
+)
+
+private fun reverbMatch(a: ReverbConfig, b: ReverbConfig): Boolean =
+    a.enabled && b.enabled &&
+        abs(a.room - b.room) < 0.02f && abs(a.damp - b.damp) < 0.02f &&
+        abs(a.mix - b.mix) < 0.02f && abs(a.predelayMs - b.predelayMs) < 2f &&
+        abs(a.width - b.width) < 0.02f
+
+/** The reverb preset menu: the current preset's name (Custom when none match), opening the list. */
+@Composable
+private fun ReverbPresetMenu(reverb: ReverbConfig, onSelect: (ReverbConfig) -> Unit) {
+    var open by remember { mutableStateOf(false) }
+    val match = REVERB_PRESETS.firstOrNull { reverbMatch(reverb, it.config) }
+    val shape = RoundedCornerShape(8.dp)
+    Box {
+        Row(
+            Modifier
+                .clip(shape)
+                .background(DesignColors.SettingsCard)
+                .border(1.dp, DesignColors.OutlineSoft, shape)
+                .clickable(role = Role.DropdownList) { open = true }
+                .padding(horizontal = DesignSpacing.Space8 + DesignSpacing.Space2, vertical = DesignSpacing.Space4 + DesignSpacing.Space2),
+            horizontalArrangement = Arrangement.spacedBy(DesignSpacing.Space4 + DesignSpacing.Space2),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                stringResource(match?.label ?: Res.string.sound_preset_custom),
+                style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = DesignColors.Ink),
+            )
+            val chevron = DesignColors.InkSecondary
+            Canvas(Modifier.size(10.dp)) {
+                val path = Path().apply {
+                    moveTo(size.width * 0.2f, size.height * 0.35f)
+                    lineTo(size.width * 0.5f, size.height * 0.65f)
+                    lineTo(size.width * 0.8f, size.height * 0.35f)
+                }
+                drawPath(path, chevron, style = Stroke(1.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+            }
+        }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            REVERB_PRESETS.forEach { preset ->
+                val selected = preset == match
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            stringResource(preset.label),
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                                color = if (selected) DesignColors.Accent else DesignColors.Ink,
+                            ),
+                        )
+                    },
+                    onClick = {
+                        onSelect(preset.config)
+                        open = false
+                    },
+                )
+            }
+        }
+    }
+}
+
+/** Reverb: an on/off row, a preset menu, then room / damping / mix / predelay / width knobs while it is on. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ReverbSection(
@@ -702,7 +771,10 @@ private fun ReverbSection(
     onChange: (ReverbConfig) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier.fillMaxWidth().padding(horizontal = DesignSpacing.Space16)) {
+    Column(
+        modifier.fillMaxWidth().padding(horizontal = DesignSpacing.Space16),
+        verticalArrangement = Arrangement.spacedBy(DesignSpacing.Space8),
+    ) {
         Row(
             Modifier
                 .fillMaxWidth()
@@ -718,8 +790,9 @@ private fun ReverbSection(
             CompactSwitch(reverb.enabled)
         }
         if (reverb.enabled) {
+            ReverbPresetMenu(reverb, onSelect = onChange)
             FlowRow(
-                Modifier.fillMaxWidth().padding(top = DesignSpacing.Space8),
+                Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(DesignSpacing.Space8),
                 verticalArrangement = Arrangement.spacedBy(DesignSpacing.Space8),
             ) {

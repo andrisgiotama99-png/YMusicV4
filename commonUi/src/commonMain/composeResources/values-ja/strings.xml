@@ -688,4 +688,7 @@
     <string name="sound_reverb_mix">ミックス</string>
     <string name="sound_reverb_predelay">プリディレイ</string>
     <string name="sound_reverb_width">幅</string>
+    <string name="sound_reverb_preset_room">ルーム</string>
+    <string name="sound_reverb_preset_hall">ホール</string>
+    <string name="sound_reverb_preset_plate">プレート</string>
 </resources>

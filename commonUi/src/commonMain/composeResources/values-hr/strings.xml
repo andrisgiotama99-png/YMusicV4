@@ -714,4 +714,7 @@
     <string name="sound_reverb_mix">Mix</string>
     <string name="sound_reverb_predelay">Predkašnjenje</string>
     <string name="sound_reverb_width">Širina</string>
+    <string name="sound_reverb_preset_room">Prostorija</string>
+    <string name="sound_reverb_preset_hall">Dvorana</string>
+    <string name="sound_reverb_preset_plate">Ploča</string>
 </resources>

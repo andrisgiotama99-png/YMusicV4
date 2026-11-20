@@ -714,4 +714,7 @@
     <string name="sound_reverb_mix">Mescla</string>
     <string name="sound_reverb_predelay">Predelay</string>
     <string name="sound_reverb_width">Amplada</string>
+    <string name="sound_reverb_preset_room">Sala</string>
+    <string name="sound_reverb_preset_hall">Hall</string>
+    <string name="sound_reverb_preset_plate">Placa</string>
 </resources>

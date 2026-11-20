@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">Mix</string>
     <string name="sound_reverb_predelay">Predelay</string>
     <string name="sound_reverb_width">Ballac</string>
+    <string name="sound_reverb_preset_room">Qol</string>
+    <string name="sound_reverb_preset_hall">Hool</string>
+    <string name="sound_reverb_preset_plate">Plate</string>
 </resources>

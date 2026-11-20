@@ -688,4 +688,7 @@
     <string name="sound_reverb_mix">混合</string>
     <string name="sound_reverb_predelay">预延迟</string>
     <string name="sound_reverb_width">宽度</string>
+    <string name="sound_reverb_preset_room">房间</string>
+    <string name="sound_reverb_preset_hall">大厅</string>
+    <string name="sound_reverb_preset_plate">板式</string>
 </resources>

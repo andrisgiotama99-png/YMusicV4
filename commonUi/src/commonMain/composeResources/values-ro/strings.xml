@@ -714,4 +714,7 @@
     <string name="sound_reverb_mix">Mix</string>
     <string name="sound_reverb_predelay">Predelay</string>
     <string name="sound_reverb_width">Lățime</string>
+    <string name="sound_reverb_preset_room">Cameră</string>
+    <string name="sound_reverb_preset_hall">Sală</string>
+    <string name="sound_reverb_preset_plate">Placă</string>
 </resources>

@@ -727,4 +727,7 @@
     <string name="sound_reverb_mix">Mix</string>
     <string name="sound_reverb_predelay">Predelay</string>
     <string name="sound_reverb_width">Szerokość</string>
+    <string name="sound_reverb_preset_room">Pokój</string>
+    <string name="sound_reverb_preset_hall">Sala</string>
+    <string name="sound_reverb_preset_plate">Płyta</string>
 </resources>

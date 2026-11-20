@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">Miks</string>
     <string name="sound_reverb_predelay">Eelviide</string>
     <string name="sound_reverb_width">Laius</string>
+    <string name="sound_reverb_preset_room">Ruum</string>
+    <string name="sound_reverb_preset_hall">Saal</string>
+    <string name="sound_reverb_preset_plate">Plaat</string>
 </resources>

@@ -125,3 +125,38 @@ pub const EQ_PRESETS: [(Str, [f32; 10]); 9] = [
     (Str::SoundPresetClassical, [5.0, 4.0, 3.0, 2.0, -1.0, -1.0, 0.0, 2.0, 3.0, 4.0]),
     (Str::SoundPresetElectronic, [4.0, 3.0, 1.0, 0.0, -2.0, 2.0, 1.0, 2.0, 3.0, 4.0]),
 ];
+
+/// The reverb's named presets.
+pub const REVERB_PRESETS: [(Str, Reverb); 3] = [
+    (
+        Str::SoundReverbPresetRoom,
+        Reverb { enabled: true, room: 0.35, damp: 0.6, mix: 0.25, predelay_ms: 10.0, width: 0.8 },
+    ),
+    (
+        Str::SoundReverbPresetHall,
+        Reverb { enabled: true, room: 0.75, damp: 0.45, mix: 0.35, predelay_ms: 40.0, width: 1.0 },
+    ),
+    (
+        Str::SoundReverbPresetPlate,
+        Reverb { enabled: true, room: 0.85, damp: 0.25, mix: 0.4, predelay_ms: 5.0, width: 1.0 },
+    ),
+];
+
+/// The preset whose values `rv` matches (within a small tolerance), if any and enabled.
+pub fn reverb_preset_of(rv: &Reverb) -> Option<usize> {
+    if !rv.enabled {
+        return None;
+    }
+    REVERB_PRESETS.iter().position(|(_, p)| {
+        (rv.room - p.room).abs() < 0.02
+            && (rv.damp - p.damp).abs() < 0.02
+            && (rv.mix - p.mix).abs() < 0.02
+            && (rv.predelay_ms - p.predelay_ms).abs() < 2.0
+            && (rv.width - p.width).abs() < 0.02
+    })
+}
+
+/// The name of `rv`'s preset, or Custom.
+pub fn reverb_preset_name(rv: &Reverb) -> &'static str {
+    reverb_preset_of(rv).map(|index| t(REVERB_PRESETS[index].0)).unwrap_or(t(Str::SoundPresetCustom))
+}

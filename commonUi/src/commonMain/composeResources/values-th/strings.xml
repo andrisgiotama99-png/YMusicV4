@@ -688,4 +688,7 @@
     <string name="sound_reverb_mix">มิกซ์</string>
     <string name="sound_reverb_predelay">พรีดีเลย์</string>
     <string name="sound_reverb_width">ความกว้าง</string>
+    <string name="sound_reverb_preset_room">ห้อง</string>
+    <string name="sound_reverb_preset_hall">ฮอลล์</string>
+    <string name="sound_reverb_preset_plate">แผ่น</string>
 </resources>

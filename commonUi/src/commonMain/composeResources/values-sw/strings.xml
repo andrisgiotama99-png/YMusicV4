@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">Mchanganyiko</string>
     <string name="sound_reverb_predelay">Ucheleweshaji wa awali</string>
     <string name="sound_reverb_width">Upana</string>
+    <string name="sound_reverb_preset_room">Chumba</string>
+    <string name="sound_reverb_preset_hall">Ukumbi</string>
+    <string name="sound_reverb_preset_plate">Plate</string>
 </resources>

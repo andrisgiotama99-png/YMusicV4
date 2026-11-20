@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">Μίξη</string>
     <string name="sound_reverb_predelay">Προκαθυστέρηση</string>
     <string name="sound_reverb_width">Πλάτος</string>
+    <string name="sound_reverb_preset_room">Δωμάτιο</string>
+    <string name="sound_reverb_preset_hall">Αίθουσα</string>
+    <string name="sound_reverb_preset_plate">Πλάκα</string>
 </resources>

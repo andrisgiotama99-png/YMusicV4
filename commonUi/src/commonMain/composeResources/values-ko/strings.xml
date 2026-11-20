@@ -688,4 +688,7 @@
     <string name="sound_reverb_mix">믹스</string>
     <string name="sound_reverb_predelay">프리딜레이</string>
     <string name="sound_reverb_width">너비</string>
+    <string name="sound_reverb_preset_room">룸</string>
+    <string name="sound_reverb_preset_hall">홀</string>
+    <string name="sound_reverb_preset_plate">플레이트</string>
 </resources>

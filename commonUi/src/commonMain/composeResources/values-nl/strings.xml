@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">Mix</string>
     <string name="sound_reverb_predelay">Predelay</string>
     <string name="sound_reverb_width">Breedte</string>
+    <string name="sound_reverb_preset_room">Kamer</string>
+    <string name="sound_reverb_preset_hall">Zaal</string>
+    <string name="sound_reverb_preset_plate">Plaat</string>
 </resources>

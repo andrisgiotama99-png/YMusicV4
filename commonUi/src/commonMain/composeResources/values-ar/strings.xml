@@ -885,4 +885,7 @@
     <string name="sound_reverb_mix">مزيج</string>
     <string name="sound_reverb_predelay">تأخير مسبق</string>
     <string name="sound_reverb_width">عرض</string>
+    <string name="sound_reverb_preset_room">غرفة</string>
+    <string name="sound_reverb_preset_hall">قاعة</string>
+    <string name="sound_reverb_preset_plate">صفيحة</string>
 </resources>

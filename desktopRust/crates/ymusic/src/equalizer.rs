@@ -13,10 +13,13 @@ use gpui_kit::component::{ActiveTheme, Sizable, StyledExt, WindowExt, h_flex, v_
 use gpui_kit::prelude::FluentBuilder;
 use gpui_kit::*;
 use ym_i18n::{Str, t, tf};
-use ym_mse::Tone;
+use ym_mse::{Reverb, Tone};
 
 use crate::a11y::{FocusList, SliderStop};
-use crate::audio_effects::{AudioEffects, EQ_PRESETS, GAIN_RANGE, VIRTUALIZER_RANGE, preset_name, preset_of};
+use crate::audio_effects::{
+    AudioEffects, EQ_PRESETS, GAIN_RANGE, REVERB_PRESETS, VIRTUALIZER_RANGE, preset_name, preset_of,
+    reverb_preset_name, reverb_preset_of,
+};
 use crate::elevated_dialog::{self, button_bar, chrome, press, scroll_body, text_button, title_bar_with};
 use crate::playback::Playback;
 use crate::settings_view::{ChromeTones, compact_switch};
@@ -56,7 +59,8 @@ const STOP_PREAMP: usize = 1;
 const STOP_BASS: usize = STOP_PREAMP + 11;
 const STOP_VIRTUALIZER: usize = STOP_BASS + 1;
 const STOP_REVERB_TOGGLE: usize = STOP_VIRTUALIZER + 1;
-const STOP_REVERB_ROOM: usize = STOP_REVERB_TOGGLE + 1;
+const STOP_REVERB_PRESET: usize = STOP_REVERB_TOGGLE + 1;
+const STOP_REVERB_ROOM: usize = STOP_REVERB_PRESET + 1;
 const STOP_REVERB_DAMP: usize = STOP_REVERB_ROOM + 1;
 const STOP_REVERB_MIX: usize = STOP_REVERB_DAMP + 1;
 const STOP_REVERB_PREDELAY: usize = STOP_REVERB_MIX + 1;
@@ -712,6 +716,7 @@ impl EqualizerDialog {
         let mut section =
             v_flex().w_full().px(px(16.)).gap(px(8.)).child(self.focus.item(STOP_REVERB_TOGGLE, toggle, cx));
         if rv.enabled {
+            section = section.child(self.reverb_preset_menu(&rv, cx));
             section = section
                 .child(
                     h_flex()
@@ -735,6 +740,56 @@ impl EqualizerDialog {
                 );
         }
         section
+    }
+
+    fn reverb_preset_menu(&self, rv: &Reverb, cx: &mut Context<Self>) -> Div {
+        let theme = cx.theme().clone();
+        let current = reverb_preset_of(rv);
+        let name = reverb_preset_name(rv);
+        let view = cx.entity().downgrade();
+        let (accent, ink) = (theme.primary, theme.foreground);
+        let button = Button::new("reverb-preset")
+            .outline()
+            .small()
+            .rounded(px(8.))
+            .h_auto()
+            .px(px(10.))
+            .py(px(6.))
+            .bg(theme.secondary)
+            .border_color(Inks::of(cx).outline_soft)
+            .text_size(px(13.))
+            .font_semibold()
+            .text_color(ink)
+            .label(name)
+            .dropdown_caret(true)
+            .accessibility_label(format!("{}, {name}", t(Str::SoundReverb)))
+            .track_focus(&self.focus.handle(STOP_REVERB_PRESET, cx))
+            .dropdown_menu(move |menu, _, _| {
+                let mut menu = menu.restyle(|style| style.check_visible = Some(false));
+                for (index, (label, preset)) in REVERB_PRESETS.into_iter().enumerate() {
+                    let selected = current == Some(index);
+                    let view = view.clone();
+                    let row = move |_: &mut Window, _: &mut App| {
+                        h_flex().gap_3().items_center().child(
+                            div()
+                                .text_size(px(14.))
+                                .font_weight(if selected { FontWeight::SEMIBOLD } else { FontWeight::NORMAL })
+                                .text_color(if selected { accent } else { ink })
+                                .child(t(label)),
+                        )
+                    };
+                    menu = menu.item(PopupMenuItem::element(row).checked(selected).on_click(move |_, _, cx| {
+                        view.update(cx, |view, cx| {
+                            let mut tone = view.playback.read(cx).effects.tone;
+                            tone.reverb = preset;
+                            view.set_tone(tone, cx);
+                        })
+                        .ok();
+                    }));
+                }
+                menu
+            });
+        self.focus.wrap(STOP_REVERB_PRESET, button, cx)
     }
 }
 

@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">Микс</string>
     <string name="sound_reverb_predelay">Преддоцнење</string>
     <string name="sound_reverb_width">Ширина</string>
+    <string name="sound_reverb_preset_room">Соба</string>
+    <string name="sound_reverb_preset_hall">Сала</string>
+    <string name="sound_reverb_preset_plate">Плоча</string>
 </resources>

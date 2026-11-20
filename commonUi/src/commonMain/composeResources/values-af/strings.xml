@@ -701,4 +701,7 @@
     <string name="sound_reverb_mix">Mengsel</string>
     <string name="sound_reverb_predelay">Voorvertraging</string>
     <string name="sound_reverb_width">Breedte</string>
+    <string name="sound_reverb_preset_room">Kamer</string>
+    <string name="sound_reverb_preset_hall">Saal</string>
+    <string name="sound_reverb_preset_plate">Plaat</string>
 </resources>
