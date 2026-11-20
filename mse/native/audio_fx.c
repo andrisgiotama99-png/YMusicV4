@@ -688,6 +688,37 @@ void audio_fx_set_reverb(AudioFx *fx, const float params[AFX_REVERB_PARAMS])
     pthread_mutex_unlock(&fx->mu);
 }
 
+int audio_fx_reverb_active(AudioFx *fx)
+{
+    int a;
+    if (!fx)
+        return 0;
+    pthread_mutex_lock(&fx->mu);
+    a = fx->rv_active;
+    pthread_mutex_unlock(&fx->mu);
+    return a;
+}
+
+int audio_fx_reverb_tail_frames(AudioFx *fx)
+{
+    int frames;
+    float secs;
+    if (!fx)
+        return 0;
+    pthread_mutex_lock(&fx->mu);
+    if (!fx->rv_active || fx->rate <= 0) {
+        pthread_mutex_unlock(&fx->mu);
+        return 0;
+    }
+    /* Generous RT60 cover: ~0.8 s for small rooms up to ~3.3 s for a stadium, capped at 4 s. */
+    secs = 0.8f + fx->rv_room * 2.5f;
+    if (secs > 4.f)
+        secs = 4.f;
+    frames = (int)((float)fx->rate * secs);
+    pthread_mutex_unlock(&fx->mu);
+    return frames;
+}
+
 void audio_fx_set_preamp(AudioFx *fx, float db)
 {
     if (!fx)

@@ -28,6 +28,11 @@ void audio_fx_set_bass(AudioFx *fx, float db);
 void audio_fx_set_virtualizer(AudioFx *fx, float width);
 /* Dattorro plate reverb on the wet send only; the dry path stays immediate, so no latency is added. */
 void audio_fx_set_reverb(AudioFx *fx, const float params[AFX_REVERB_PARAMS]);
+
+/* Whether the reverb is currently active (for end-of-stream tail draining). */
+int audio_fx_reverb_active(AudioFx *fx);
+/* Estimated reverb tail length in frames at the current rate (0 when inactive). */
+int audio_fx_reverb_tail_frames(AudioFx *fx);
 /* User level trim, -12..+12 dB, on top of the automatic loudness-matched pre-gain. */
 void audio_fx_set_preamp(AudioFx *fx, float db);
 void audio_fx_set_speed(AudioFx *fx, float speed);

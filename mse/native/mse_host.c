@@ -174,6 +174,8 @@ struct MseHost {
     /* The audio stream ended (endOfStream, all of it played) while the media runs on: the clock
        continues on wall time instead of freezing at the last sample. */
     int audio_out;
+    /* Reverb tail frames still to feed as silence at end-of-stream (0 = none / reverb off). mu. */
+    int rv_tail_left;
 #endif
 #ifdef MSE_AQ
     AudioQueueRef aq;
@@ -660,6 +662,7 @@ static void ring_flush(MseHost *h)
     h->dac_cp_n = 0;
     h->pcm_anchor = 1;
     h->audio_out = 0;
+    h->rv_tail_left = 0;
 #ifdef __ANDROID__
     h->dac_live = 0;
     h->dac_drain = 0;
@@ -1034,9 +1037,29 @@ static void audio_out_check(MseHost *h)
     t = host_clock(h);
     pthread_mutex_lock(&h->mu);
     if (h->playing && h->eos && !h->audio_out && h->ring_n <= 0) {
-        h->hold = t;
-        h->origin_ns = now_ns();
-        h->audio_out = 1;
+        if (h->rv_tail_left > 0 && h->ring && h->ch > 0 && h->rate > 0 && audio_fx_reverb_active(h->fx)) {
+            /* Feed the reverb tail as silence through the ring; the DAC colors it on drain, so the
+               plate rings out before the stream is declared ended. Gated on reverb-active. */
+            int fb = frame_bytes(h);
+            int wf = h->rate / 10;
+            uint8_t *z;
+            if (wf > h->rv_tail_left)
+                wf = h->rv_tail_left;
+            if (wf < 1)
+                wf = 1;
+            z = (uint8_t *)calloc((size_t)wf, (size_t)fb);
+            if (z) {
+                ring_write(h, z, wf * fb);
+                free(z);
+                h->rv_tail_left -= wf;
+            } else {
+                h->rv_tail_left = 0;
+            }
+        } else {
+            h->hold = t;
+            h->origin_ns = now_ns();
+            h->audio_out = 1;
+        }
     }
     pthread_mutex_unlock(&h->mu);
 }
@@ -1989,6 +2012,9 @@ void mse_host_end_of_stream(MseHost *h)
         return;
     pthread_mutex_lock(&h->mu);
     h->eos = 1;
+#ifdef MSE_DAC
+    h->rv_tail_left = audio_fx_reverb_tail_frames(h->fx);
+#endif
     pthread_mutex_unlock(&h->mu);
     host_fed(h);
     maybe_notify_ended(h);
