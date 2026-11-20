@@ -46,7 +46,7 @@ fun isPlaying(status: PlaybackStatus, queue: QueueState): Boolean =
 /** How the video fills its surface. Mirrors the legacy player's scale modes. */
 enum class ScaleMode { COVER, FILL, CONTAIN }
 
-/** Freeverb reverb, applied on the wet send only. [mix] crossfades dry→wet (0 = dry);
+/** Dattorro plate reverb, applied on the wet send only. [mix] crossfades dry→wet (0 = dry);
  *  [predelayMs] delays the wet send alone, so the dry path adds no latency. */
 data class ReverbConfig(
     val enabled: Boolean = false,
@@ -85,7 +85,7 @@ data class PlaybackConfig(
     val virtualizer: Float = 1f,
     /** Level trim into the equalizer, −12..+12 dB, on top of its automatic loudness matching. */
     val preampDb: Float = 0f,
-    /** Freeverb reverb (wet send only); off by default. */
+    /** Dattorro plate reverb (wet send only); off by default. */
     val reverb: ReverbConfig = ReverbConfig(),
     /** False bypasses the equalizer/bass/virtualizer/preamp (system audio effects take over); the values are kept. */
     val inAppAudioFx: Boolean = true,

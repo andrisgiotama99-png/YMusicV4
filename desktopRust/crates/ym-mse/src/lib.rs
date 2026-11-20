@@ -15,7 +15,7 @@ pub use local::{AvStream, Cue, LocalAv, StreamKind};
 /// EQ bands' centre frequencies, Hz.
 pub const EQ_BANDS_HZ: [u32; 10] = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
 
-/// Freeverb reverb on the wet send only; mirrors the Kotlin `ReverbConfig`.
+/// Dattorro plate reverb on the wet send only; mirrors the Kotlin `ReverbConfig`.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Reverb {
     pub enabled: bool,

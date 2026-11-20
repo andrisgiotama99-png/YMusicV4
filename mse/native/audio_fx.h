@@ -25,7 +25,7 @@ void audio_fx_set_volume(AudioFx *fx, float vol);
 void audio_fx_set_eq(AudioFx *fx, const float bands_db[AFX_BANDS]);
 void audio_fx_set_bass(AudioFx *fx, float db);
 void audio_fx_set_virtualizer(AudioFx *fx, float width);
-/* Freeverb-style reverb on the wet send only; the dry path stays immediate, so no latency is added. */
+/* Dattorro plate reverb on the wet send only; the dry path stays immediate, so no latency is added. */
 void audio_fx_set_reverb(AudioFx *fx, const float params[AFX_REVERB_PARAMS]);
 /* User level trim, -12..+12 dB, on top of the automatic loudness-matched pre-gain. */
 void audio_fx_set_preamp(AudioFx *fx, float db);
