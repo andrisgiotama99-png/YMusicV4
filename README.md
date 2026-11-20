@@ -33,6 +33,9 @@
 Just another YouTube client, try it out yourself.
 Missing something? [Open a new issue](https://github.com/ymusic-io/YMusicV4/issues/new).
 
+Built-in sound effects include a Dattorro plate reverb with presets and advanced diffusion controls —
+see [`REVERB.md`](REVERB.md) for the feature tour and credits.
+
 ## Download
 
 Get the latest version from the **[Releases page](https://github.com/ymusic-io/YMusicV4/releases/latest)**.

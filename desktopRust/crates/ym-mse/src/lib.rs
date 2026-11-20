@@ -16,6 +16,9 @@ pub use local::{AvStream, Cue, LocalAv, StreamKind};
 pub const EQ_BANDS_HZ: [u32; 10] = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
 
 /// Dattorro plate reverb on the wet send only; mirrors the Kotlin `ReverbConfig`.
+///
+/// Adapted from `el-visio/dattorro-verb` (MIT, Pauli Pölkki 2022); algorithm by Jon Dattorro,
+/// "Effect Design Part 1", CCRMA. See [`REVERB.md`](../../../REVERB.md) for controls and credits.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Reverb {
     pub enabled: bool,
