@@ -793,7 +793,16 @@ private fun ReverbSection(
             CompactSwitch(reverb.enabled)
         }
         if (reverb.enabled) {
-            ReverbPresetMenu(reverb, onSelect = onChange)
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                ReverbPresetMenu(reverb, onSelect = onChange)
+                TextButton(onClick = { onChange(ReverbConfig(enabled = reverb.enabled)) }) {
+                    Text(stringResource(Res.string.sound_reset), color = DesignColors.Accent, fontSize = 13.sp)
+                }
+            }
             FlowRow(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(DesignSpacing.Space8),

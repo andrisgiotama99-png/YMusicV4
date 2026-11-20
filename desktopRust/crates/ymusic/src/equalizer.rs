@@ -70,7 +70,8 @@ const STOP_REVERB_PREFILTER: usize = STOP_REVERB_ADVANCED + 1;
 const STOP_REVERB_INDIFF1: usize = STOP_REVERB_PREFILTER + 1;
 const STOP_REVERB_INDIFF2: usize = STOP_REVERB_INDIFF1 + 1;
 const STOP_REVERB_DECAYDIFF: usize = STOP_REVERB_INDIFF2 + 1;
-const STOP_RESET: usize = STOP_REVERB_DECAYDIFF + 1;
+const STOP_REVERB_RESET: usize = STOP_REVERB_DECAYDIFF + 1;
+const STOP_RESET: usize = STOP_REVERB_RESET + 1;
 const STOP_OK: usize = STOP_RESET + 1;
 
 /// Two linear halves, so the neutral 1× sits at the knob's top.
@@ -777,7 +778,28 @@ impl EqualizerDialog {
         let mut section =
             v_flex().w_full().px(px(16.)).gap(px(8.)).child(self.focus.item(STOP_REVERB_TOGGLE, toggle, cx));
         if rv.enabled {
-            section = section.child(self.reverb_preset_menu(&rv, cx));
+            let rv_reset = text_button("eq-reverb-reset", t(Str::SoundReset), false, true, cx);
+            let rv_reset = press(
+                &self.focus,
+                STOP_REVERB_RESET,
+                rv_reset,
+                true,
+                cx.listener(|view, _, _, cx| {
+                    let mut tone = view.playback.read(cx).effects.tone;
+                    let enabled = tone.reverb.enabled;
+                    tone.reverb = Reverb { enabled, ..Reverb::default() };
+                    view.set_tone(tone, cx);
+                }),
+                cx,
+            );
+            section = section.child(
+                h_flex()
+                    .w_full()
+                    .items_center()
+                    .child(self.reverb_preset_menu(&rv, cx))
+                    .child(div().flex_1())
+                    .child(rv_reset),
+            );
             section = section
                 .child(
                     h_flex()
