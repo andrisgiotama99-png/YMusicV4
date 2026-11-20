@@ -121,6 +121,8 @@ struct MseHost {
     float speed;
     int64_t samples_played;
     int64_t samples_pulled;
+    /* Reverb tail frames still to feed as silence at end-of-stream (0 = none / reverb off). mu. */
+    int rv_tail_left;
     /* When audio started waiting for video data (now_ns), 0 while it is not. */
     double v_starve_ns;
     double v_starve_end_ns;
@@ -174,8 +176,6 @@ struct MseHost {
     /* The audio stream ended (endOfStream, all of it played) while the media runs on: the clock
        continues on wall time instead of freezing at the last sample. */
     int audio_out;
-    /* Reverb tail frames still to feed as silence at end-of-stream (0 = none / reverb off). mu. */
-    int rv_tail_left;
 #endif
 #ifdef MSE_AQ
     AudioQueueRef aq;
@@ -1346,6 +1346,43 @@ static void *dec_loop(void *arg)
                 h->samples_pulled += frames;
                 pthread_mutex_unlock(&h->mu);
             }
+        } else {
+            /* End-of-stream reverb tail: feed silence through color + on_pcm so the plate rings out
+               before 'ended'. The sink's bounded write paces it to real time. Gated reverb-active. */
+            int wf = 0, rate = 0, ch = 0;
+            MsePcmFn cb = NULL;
+            void *user = NULL;
+            pthread_mutex_lock(&h->mu);
+            if (h->eos && h->rv_tail_left > 0 && h->fx && h->ch > 0 && h->rate > 0 &&
+                audio_fx_reverb_active(h->fx)) {
+                wf = h->rate / 10;
+                if (wf > h->rv_tail_left)
+                    wf = h->rv_tail_left;
+                if (wf < 1)
+                    wf = 1;
+                rate = h->rate;
+                ch = h->ch;
+                cb = h->on_pcm;
+                user = h->user;
+            }
+            pthread_mutex_unlock(&h->mu);
+            if (wf > 0) {
+                int16_t *z = (int16_t *)calloc((size_t)wf * ch, sizeof(int16_t));
+                if (z) {
+                    audio_fx_color(h->fx, z, wf, ch);
+                    if (cb)
+                        cb(user, rate, ch, z, wf * ch * (int)sizeof(int16_t));
+                    free(z);
+                    pthread_mutex_lock(&h->mu);
+                    h->rv_tail_left -= wf;
+                    h->samples_pulled += wf;
+                    pthread_mutex_unlock(&h->mu);
+                } else {
+                    pthread_mutex_lock(&h->mu);
+                    h->rv_tail_left = 0;
+                    pthread_mutex_unlock(&h->mu);
+                }
+            }
         }
 #endif
 
@@ -1808,6 +1845,7 @@ static void seek_common(MseHost *h, double seconds)
     h->origin_ns = now_ns();
     h->eos = 0;
     h->ended_sent = 0;
+    h->rv_tail_left = 0;
     h->v_starve_ns = 0;
     h->v_starve_end_ns = 0;
     h->v_start_t = seconds;
@@ -1851,6 +1889,7 @@ void mse_host_reset(MseHost *h)
     h->origin_ns = 0;
     h->eos = 0;
     h->ended_sent = 0;
+    h->rv_tail_left = 0;
     h->vw = 0;
     h->vh = 0;
 #ifdef MSE_DAC
@@ -1974,6 +2013,10 @@ static int audio_done(MseHost *h)
     out = h->audio_out;
 #else
     ring_empty = 1;
+    if (h->rv_tail_left > 0) {
+        pthread_mutex_unlock(&h->mu);
+        return 0;
+    }
 #endif
     pthread_mutex_unlock(&h->mu);
     if (!ring_empty)
@@ -2012,9 +2055,7 @@ void mse_host_end_of_stream(MseHost *h)
         return;
     pthread_mutex_lock(&h->mu);
     h->eos = 1;
-#ifdef MSE_DAC
     h->rv_tail_left = audio_fx_reverb_tail_frames(h->fx);
-#endif
     pthread_mutex_unlock(&h->mu);
     host_fed(h);
     maybe_notify_ended(h);

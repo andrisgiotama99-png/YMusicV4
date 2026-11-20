@@ -88,6 +88,8 @@ struct FileAv {
     int opened;
     int playing;
     int ended;
+    /* Reverb tail frames still to feed as silence at EOF; -1 = not yet computed. mu. */
+    int rv_tail_left;
     int want_video;
     int v_need_key; /* after rest: drop until a key at/after the clock */
     int v_open;     /* the video decoder is open */
@@ -1528,6 +1530,49 @@ int file_av_step(FileAv *p)
 #endif
     v_empty = !need_video(p) || ((p->vq.rd >= p->vq.n) && p->vout_n == 0 && !p->dec_busy);
     if (eof && a_empty && v_empty && !p->ended && (p->adec || need_video(p))) {
+        if (p->rv_tail_left < 0)
+            p->rv_tail_left = audio_fx_reverb_tail_frames(p->fx);
+        if (p->rv_tail_left > 0 && p->fx && audio_fx_reverb_active(p->fx)) {
+            /* Ring the plate out before 'ended': feed silence (colored on the AQ pull, or colored
+               here and pushed through on_pcm). Gated on reverb-active; off-path unchanged. */
+            int wf = OUT_RATE / 10;
+            if (wf > p->rv_tail_left)
+                wf = p->rv_tail_left;
+            if (wf < 1)
+                wf = 1;
+#ifdef FILE_AV_AQ
+            {
+                int fb = ring_fb(p);
+                uint8_t *z = (uint8_t *)calloc((size_t)wf, (size_t)fb);
+                if (z) {
+                    ring_write(p, z, wf * fb);
+                    free(z);
+                    p->rv_tail_left -= wf;
+                } else {
+                    p->rv_tail_left = 0;
+                }
+            }
+#else
+            {
+                int16_t *z = (int16_t *)calloc((size_t)wf * OUT_CH, sizeof(int16_t));
+                if (z) {
+                    FileAvPcmFn cb = p->on_pcm;
+                    void *user = p->user;
+                    audio_fx_color(p->fx, z, wf, OUT_CH);
+                    p->rv_tail_left -= wf;
+                    pthread_mutex_unlock(&p->mu);
+                    if (cb)
+                        cb(user, OUT_RATE, OUT_CH, z, wf * OUT_CH * 2);
+                    free(z);
+                    pthread_mutex_lock(&p->mu);
+                } else {
+                    p->rv_tail_left = 0;
+                }
+            }
+#endif
+            pthread_mutex_unlock(&p->mu);
+            return 1;
+        }
         p->ended = 1;
         p->playing = 0;
         p->hold = p->duration > 0 ? p->duration : clock;
@@ -1639,6 +1684,7 @@ int file_av_open(FileAv *p, const char *path)
     pthread_mutex_lock(&p->mu);
     p->err[0] = 0;
     p->ended = 0;
+    p->rv_tail_left = -1;
     p->hold = 0;
     p->origin_ns = 0;
 #ifdef FILE_AV_AQ
@@ -1680,6 +1726,7 @@ int file_av_open(FileAv *p, const char *path)
     }
     p->opened = 1;
     p->ended = 0;
+    p->rv_tail_left = -1;
     pthread_mutex_unlock(&p->mu);
     return 0;
 }
@@ -1731,6 +1778,7 @@ void file_av_play(FileAv *p)
     if (p->opened && !p->playing) {
         p->playing = 1;
         p->ended = 0;
+        p->rv_tail_left = -1;
         /* Video-only: clock starts on first present. Audio: AudioQueue samples_played. */
         p->origin_ns = 0;
 #ifdef FILE_AV_AQ
@@ -1820,6 +1868,7 @@ void file_av_seek(FileAv *p, double seconds)
     vout_clear(p);
     p->hold = seconds;
     p->ended = 0;
+    p->rv_tail_left = -1;
     p->last_vpts = -1;
     p->origin_ns = 0;
 #ifdef FILE_AV_AQ
