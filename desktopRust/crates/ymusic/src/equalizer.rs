@@ -368,9 +368,8 @@ impl EqualizerDialog {
     }
 
     fn reset(&mut self, cx: &mut Context<Self>) {
-        // The JVM reset clears the tone controls but leaves reverb as it is.
-        let reverb = self.playback.read(cx).effects.tone.reverb;
-        self.set_tone(Tone { reverb, ..Tone::default() }, cx);
+        // Reset every tone control, reverb included, to its default (reverb off).
+        self.set_tone(Tone::default(), cx);
     }
 
     fn press_fader(&mut self, control: Control, position: Point<Pixels>, cx: &mut Context<Self>) {

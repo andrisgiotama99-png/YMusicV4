@@ -184,6 +184,7 @@ internal fun EqualizerFxSheet(graph: AppGraph, onDismiss: () -> Unit) {
                     player.setBassBoost(0f)
                     player.setVirtualizer(1f)
                     player.setPreamp(0f)
+                    player.setReverb(ReverbConfig())
                 }
             }
             TextButton(onClick = onDismiss) {
