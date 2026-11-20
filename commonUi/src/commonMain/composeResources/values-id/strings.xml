@@ -691,4 +691,5 @@
     <string name="sound_reverb_preset_room">Ruang</string>
     <string name="sound_reverb_preset_hall">Aula</string>
     <string name="sound_reverb_preset_plate">Plate</string>
+    <string name="sound_reverb_preset_stadium">Stadion</string>
 </resources>

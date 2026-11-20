@@ -699,6 +699,7 @@ private val REVERB_PRESETS = listOf(
     ReverbPreset(Res.string.sound_reverb_preset_room, ReverbConfig(enabled = true, room = 0.35f, damp = 0.6f, mix = 0.25f, predelayMs = 10f, width = 0.8f)),
     ReverbPreset(Res.string.sound_reverb_preset_hall, ReverbConfig(enabled = true, room = 0.75f, damp = 0.45f, mix = 0.35f, predelayMs = 40f, width = 1f)),
     ReverbPreset(Res.string.sound_reverb_preset_plate, ReverbConfig(enabled = true, room = 0.85f, damp = 0.25f, mix = 0.4f, predelayMs = 5f, width = 1f)),
+    ReverbPreset(Res.string.sound_reverb_preset_stadium, ReverbConfig(enabled = true, room = 0.95f, damp = 0.35f, mix = 0.45f, predelayMs = 80f, width = 1f)),
 )
 
 private fun reverbMatch(a: ReverbConfig, b: ReverbConfig): Boolean =

@@ -717,4 +717,5 @@
     <string name="sound_reverb_preset_room">Prostorija</string>
     <string name="sound_reverb_preset_hall">Dvorana</string>
     <string name="sound_reverb_preset_plate">Ploča</string>
+    <string name="sound_reverb_preset_stadium">Stadion</string>
 </resources>

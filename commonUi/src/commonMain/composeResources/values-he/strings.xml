@@ -717,4 +717,5 @@
     <string name="sound_reverb_preset_room">חדר</string>
     <string name="sound_reverb_preset_hall">אולם</string>
     <string name="sound_reverb_preset_plate">פלטה</string>
+    <string name="sound_reverb_preset_stadium">אצטדיון</string>
 </resources>

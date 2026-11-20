@@ -691,4 +691,5 @@
     <string name="sound_reverb_preset_room">房間</string>
     <string name="sound_reverb_preset_hall">大廳</string>
     <string name="sound_reverb_preset_plate">板式</string>
+    <string name="sound_reverb_preset_stadium">體育場</string>
 </resources>

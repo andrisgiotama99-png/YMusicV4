@@ -717,4 +717,5 @@
     <string name="sound_reverb_preset_room">Sala</string>
     <string name="sound_reverb_preset_hall">Salão</string>
     <string name="sound_reverb_preset_plate">Placa</string>
+    <string name="sound_reverb_preset_stadium">Estádio</string>
 </resources>

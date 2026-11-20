@@ -888,4 +888,5 @@
     <string name="sound_reverb_preset_room">غرفة</string>
     <string name="sound_reverb_preset_hall">قاعة</string>
     <string name="sound_reverb_preset_plate">صفيحة</string>
+    <string name="sound_reverb_preset_stadium">ملعب</string>
 </resources>

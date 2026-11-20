@@ -886,4 +886,5 @@
     <string name="sound_reverb_preset_room">Кімната</string>
     <string name="sound_reverb_preset_hall">Зала</string>
     <string name="sound_reverb_preset_plate">Пластина</string>
+    <string name="sound_reverb_preset_stadium">Стадіон</string>
 </resources>

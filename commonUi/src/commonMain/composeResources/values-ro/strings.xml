@@ -717,4 +717,5 @@
     <string name="sound_reverb_preset_room">Cameră</string>
     <string name="sound_reverb_preset_hall">Sală</string>
     <string name="sound_reverb_preset_plate">Placă</string>
+    <string name="sound_reverb_preset_stadium">Stadion</string>
 </resources>

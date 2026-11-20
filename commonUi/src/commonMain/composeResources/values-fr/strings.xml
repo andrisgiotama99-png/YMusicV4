@@ -717,4 +717,5 @@
     <string name="sound_reverb_preset_room">Pièce</string>
     <string name="sound_reverb_preset_hall">Salle</string>
     <string name="sound_reverb_preset_plate">Plaque</string>
+    <string name="sound_reverb_preset_stadium">Stade</string>
 </resources>

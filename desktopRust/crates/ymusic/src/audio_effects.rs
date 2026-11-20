@@ -127,7 +127,7 @@ pub const EQ_PRESETS: [(Str, [f32; 10]); 9] = [
 ];
 
 /// The reverb's named presets.
-pub const REVERB_PRESETS: [(Str, Reverb); 3] = [
+pub const REVERB_PRESETS: [(Str, Reverb); 4] = [
     (
         Str::SoundReverbPresetRoom,
         Reverb { enabled: true, room: 0.35, damp: 0.6, mix: 0.25, predelay_ms: 10.0, width: 0.8 },
@@ -139,6 +139,10 @@ pub const REVERB_PRESETS: [(Str, Reverb); 3] = [
     (
         Str::SoundReverbPresetPlate,
         Reverb { enabled: true, room: 0.85, damp: 0.25, mix: 0.4, predelay_ms: 5.0, width: 1.0 },
+    ),
+    (
+        Str::SoundReverbPresetStadium,
+        Reverb { enabled: true, room: 0.95, damp: 0.35, mix: 0.45, predelay_ms: 80.0, width: 1.0 },
     ),
 ];
 

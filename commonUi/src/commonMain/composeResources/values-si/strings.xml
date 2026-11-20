@@ -704,4 +704,5 @@
     <string name="sound_reverb_preset_room">කාමරය</string>
     <string name="sound_reverb_preset_hall">ශාලාව</string>
     <string name="sound_reverb_preset_plate">තහඩුව</string>
+    <string name="sound_reverb_preset_stadium">ක්‍රීඩාංගණය</string>
 </resources>

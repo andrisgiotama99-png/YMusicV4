@@ -717,4 +717,5 @@
     <string name="sound_reverb_preset_room">Stanza</string>
     <string name="sound_reverb_preset_hall">Sala</string>
     <string name="sound_reverb_preset_plate">Piastra</string>
+    <string name="sound_reverb_preset_stadium">Stadio</string>
 </resources>

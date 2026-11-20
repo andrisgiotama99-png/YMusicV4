@@ -704,4 +704,5 @@
     <string name="sound_reverb_preset_room">Qol</string>
     <string name="sound_reverb_preset_hall">Hool</string>
     <string name="sound_reverb_preset_plate">Plate</string>
+    <string name="sound_reverb_preset_stadium">Stadium</string>
 </resources>

@@ -730,4 +730,5 @@
     <string name="sound_reverb_preset_room">Místnost</string>
     <string name="sound_reverb_preset_hall">Sál</string>
     <string name="sound_reverb_preset_plate">Deska</string>
+    <string name="sound_reverb_preset_stadium">Stadion</string>
 </resources>

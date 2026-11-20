@@ -704,4 +704,5 @@
     <string name="sound_reverb_preset_room">Δωμάτιο</string>
     <string name="sound_reverb_preset_hall">Αίθουσα</string>
     <string name="sound_reverb_preset_plate">Πλάκα</string>
+    <string name="sound_reverb_preset_stadium">Στάδιο</string>
 </resources>

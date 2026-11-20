@@ -704,4 +704,5 @@
     <string name="sound_reverb_preset_room">कमरा</string>
     <string name="sound_reverb_preset_hall">हॉल</string>
     <string name="sound_reverb_preset_plate">प्लेट</string>
+    <string name="sound_reverb_preset_stadium">स्टेडियम</string>
 </resources>

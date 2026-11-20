@@ -691,4 +691,5 @@
     <string name="sound_reverb_preset_room">룸</string>
     <string name="sound_reverb_preset_hall">홀</string>
     <string name="sound_reverb_preset_plate">플레이트</string>
+    <string name="sound_reverb_preset_stadium">스타디움</string>
 </resources>

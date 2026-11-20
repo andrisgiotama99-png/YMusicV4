@@ -691,4 +691,5 @@
     <string name="sound_reverb_preset_room">ห้อง</string>
     <string name="sound_reverb_preset_hall">ฮอลล์</string>
     <string name="sound_reverb_preset_plate">แผ่น</string>
+    <string name="sound_reverb_preset_stadium">สนามกีฬา</string>
 </resources>

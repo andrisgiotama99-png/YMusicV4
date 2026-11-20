@@ -704,4 +704,5 @@
     <string name="sound_reverb_preset_room">Стая</string>
     <string name="sound_reverb_preset_hall">Зала</string>
     <string name="sound_reverb_preset_plate">Пластина</string>
+    <string name="sound_reverb_preset_stadium">Стадион</string>
 </resources>

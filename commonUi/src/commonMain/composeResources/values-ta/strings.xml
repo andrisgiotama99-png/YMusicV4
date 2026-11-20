@@ -704,4 +704,5 @@
     <string name="sound_reverb_preset_room">அறை</string>
     <string name="sound_reverb_preset_hall">மண்டபம்</string>
     <string name="sound_reverb_preset_plate">தட்டு</string>
+    <string name="sound_reverb_preset_stadium">மைதானம்</string>
 </resources>

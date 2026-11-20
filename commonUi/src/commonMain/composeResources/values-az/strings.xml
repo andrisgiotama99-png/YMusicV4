@@ -704,4 +704,5 @@
     <string name="sound_reverb_preset_room">Otaq</string>
     <string name="sound_reverb_preset_hall">Zal</string>
     <string name="sound_reverb_preset_plate">Plate</string>
+    <string name="sound_reverb_preset_stadium">Stadion</string>
 </resources>
