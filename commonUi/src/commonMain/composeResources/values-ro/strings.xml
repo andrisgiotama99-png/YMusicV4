@@ -718,6 +718,7 @@
     <string name="sound_reverb_preset_hall">Sală</string>
     <string name="sound_reverb_preset_plate">Placă</string>
     <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">Avansat</string>
     <string name="sound_reverb_prefilter">Prefiltru</string>
     <string name="sound_reverb_indiff1">Difuzie intrare 1</string>

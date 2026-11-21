@@ -705,6 +705,7 @@
     <string name="sound_reverb_preset_hall">ಸಭಾಂಗಣ</string>
     <string name="sound_reverb_preset_plate">ಪ್ಲೇಟ್</string>
     <string name="sound_reverb_preset_stadium">ಕ್ರೀಡಾಂಗಣ</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">ಮುಂದುವರಿದ</string>
     <string name="sound_reverb_prefilter">ಪೂರ್ವ ಫಿಲ್ಟರ್</string>
     <string name="sound_reverb_indiff1">ಇನ್‌ಪುಟ್ ಡಿಫ್ಯೂಷನ್ 1</string>

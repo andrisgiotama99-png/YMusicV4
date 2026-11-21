@@ -705,6 +705,7 @@
     <string name="sound_reverb_preset_hall">হল</string>
     <string name="sound_reverb_preset_plate">প্লেট</string>
     <string name="sound_reverb_preset_stadium">স্টেডিয়াম</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">উন্নত</string>
     <string name="sound_reverb_prefilter">প্রি-ফিল্টার</string>
     <string name="sound_reverb_indiff1">ইনপুট ডিফিউশন ১</string>

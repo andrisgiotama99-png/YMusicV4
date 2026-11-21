@@ -718,6 +718,7 @@
     <string name="sound_reverb_preset_hall">Dvorana</string>
     <string name="sound_reverb_preset_plate">Ploča</string>
     <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">Napredno</string>
     <string name="sound_reverb_prefilter">Predfilter</string>
     <string name="sound_reverb_indiff1">Ulazna difuzija 1</string>

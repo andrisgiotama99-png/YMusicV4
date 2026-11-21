@@ -705,6 +705,7 @@
     <string name="sound_reverb_preset_hall">Ukumbi</string>
     <string name="sound_reverb_preset_plate">Plate</string>
     <string name="sound_reverb_preset_stadium">Uwanja</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">Kina</string>
     <string name="sound_reverb_prefilter">Kichujio cha awali</string>
     <string name="sound_reverb_indiff1">Usambazaji wa ingizo 1</string>

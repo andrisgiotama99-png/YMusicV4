@@ -705,6 +705,7 @@
     <string name="sound_reverb_preset_hall">Αίθουσα</string>
     <string name="sound_reverb_preset_plate">Πλάκα</string>
     <string name="sound_reverb_preset_stadium">Στάδιο</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">Σύνθετα</string>
     <string name="sound_reverb_prefilter">Προφίλτρο</string>
     <string name="sound_reverb_indiff1">Διάχυση εισόδου 1</string>

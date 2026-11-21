@@ -718,6 +718,7 @@
     <string name="sound_reverb_preset_hall">Hall</string>
     <string name="sound_reverb_preset_plate">Placa</string>
     <string name="sound_reverb_preset_stadium">Estadio</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">Avanzado</string>
     <string name="sound_reverb_prefilter">Prefiltro</string>
     <string name="sound_reverb_indiff1">Difusión de entrada 1</string>

@@ -705,6 +705,7 @@
     <string name="sound_reverb_preset_hall">மண்டபம்</string>
     <string name="sound_reverb_preset_plate">தட்டு</string>
     <string name="sound_reverb_preset_stadium">மைதானம்</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">மேம்பட்ட</string>
     <string name="sound_reverb_prefilter">முன் வடிகட்டி</string>
     <string name="sound_reverb_indiff1">உள்ளீடு பரவல் 1</string>

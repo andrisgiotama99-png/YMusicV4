@@ -692,6 +692,7 @@
     <string name="sound_reverb_preset_hall">홀</string>
     <string name="sound_reverb_preset_plate">플레이트</string>
     <string name="sound_reverb_preset_stadium">스타디움</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">고급</string>
     <string name="sound_reverb_prefilter">프리 필터</string>
     <string name="sound_reverb_indiff1">입력 디퓨전 1</string>

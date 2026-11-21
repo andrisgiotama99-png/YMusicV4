@@ -705,6 +705,7 @@
     <string name="sound_reverb_preset_hall">Saal</string>
     <string name="sound_reverb_preset_plate">Plaat</string>
     <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">Gevorderd</string>
     <string name="sound_reverb_prefilter">Voorfilter</string>
     <string name="sound_reverb_indiff1">Toevoerdiffusie 1</string>

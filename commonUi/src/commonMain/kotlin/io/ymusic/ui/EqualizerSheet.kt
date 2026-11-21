@@ -97,6 +97,7 @@ import io.ymusic.ui.resources.sound_reverb_indiff2
 import io.ymusic.ui.resources.sound_reverb_mix
 import io.ymusic.ui.resources.sound_reverb_predelay
 import io.ymusic.ui.resources.sound_reverb_prefilter
+import io.ymusic.ui.resources.sound_reverb_preset_cathedral
 import io.ymusic.ui.resources.sound_reverb_preset_hall
 import io.ymusic.ui.resources.sound_reverb_preset_plate
 import io.ymusic.ui.resources.sound_reverb_preset_room
@@ -716,6 +717,7 @@ private val REVERB_PRESETS = listOf(
     ReverbPreset(Res.string.sound_reverb_preset_hall, ReverbConfig(enabled = true, room = 0.75f, damp = 0.45f, mix = 0.35f, predelayMs = 40f, width = 1f)),
     ReverbPreset(Res.string.sound_reverb_preset_plate, ReverbConfig(enabled = true, room = 0.85f, damp = 0.25f, mix = 0.4f, predelayMs = 5f, width = 1f)),
     ReverbPreset(Res.string.sound_reverb_preset_stadium, ReverbConfig(enabled = true, room = 0.95f, damp = 0.35f, mix = 0.45f, predelayMs = 80f, width = 1f)),
+    ReverbPreset(Res.string.sound_reverb_preset_cathedral, ReverbConfig(enabled = true, room = 0.9f, damp = 0.3f, mix = 0.5f, predelayMs = 50f, width = 1f)),
 )
 
 private fun reverbMatch(a: ReverbConfig, b: ReverbConfig): Boolean =

@@ -705,6 +705,7 @@
     <string name="sound_reverb_preset_hall">ഹാൾ</string>
     <string name="sound_reverb_preset_plate">പ്ലേറ്റ്</string>
     <string name="sound_reverb_preset_stadium">സ്റ്റേഡിയം</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">വിപുലമായ</string>
     <string name="sound_reverb_prefilter">പ്രീ-ഫിൽട്ടർ</string>
     <string name="sound_reverb_indiff1">ഇൻപുട്ട് ഡിഫ്യൂഷൻ 1</string>

@@ -731,6 +731,7 @@
     <string name="sound_reverb_preset_hall">Sála</string>
     <string name="sound_reverb_preset_plate">Doska</string>
     <string name="sound_reverb_preset_stadium">Štadión</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">Pokročilé</string>
     <string name="sound_reverb_prefilter">Vstupný filter</string>
     <string name="sound_reverb_indiff1">Vstupná difúzia 1</string>

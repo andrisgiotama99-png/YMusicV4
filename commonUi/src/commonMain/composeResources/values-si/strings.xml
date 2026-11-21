@@ -705,6 +705,7 @@
     <string name="sound_reverb_preset_hall">ශාලාව</string>
     <string name="sound_reverb_preset_plate">තහඩුව</string>
     <string name="sound_reverb_preset_stadium">ක්‍රීඩාංගණය</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">උසස්</string>
     <string name="sound_reverb_prefilter">පෙර පෙරහන</string>
     <string name="sound_reverb_indiff1">ආදාන විසරණය 1</string>

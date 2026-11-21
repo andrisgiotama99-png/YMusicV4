@@ -692,6 +692,7 @@
     <string name="sound_reverb_preset_hall">大厅</string>
     <string name="sound_reverb_preset_plate">板式</string>
     <string name="sound_reverb_preset_stadium">体育场</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">高级</string>
     <string name="sound_reverb_prefilter">预滤波</string>
     <string name="sound_reverb_indiff1">输入扩散 1</string>

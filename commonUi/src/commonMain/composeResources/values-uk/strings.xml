@@ -887,6 +887,7 @@
     <string name="sound_reverb_preset_hall">Зала</string>
     <string name="sound_reverb_preset_plate">Пластина</string>
     <string name="sound_reverb_preset_stadium">Стадіон</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">Додатково</string>
     <string name="sound_reverb_prefilter">Попередній фільтр</string>
     <string name="sound_reverb_indiff1">Вхідна дифузія 1</string>

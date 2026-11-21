@@ -705,6 +705,7 @@
     <string name="sound_reverb_preset_hall">Bulwagan</string>
     <string name="sound_reverb_preset_plate">Plate</string>
     <string name="sound_reverb_preset_stadium">Stadium</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">Advanced</string>
     <string name="sound_reverb_prefilter">Pre-filter</string>
     <string name="sound_reverb_indiff1">Input diffusion 1</string>

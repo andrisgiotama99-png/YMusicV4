@@ -705,6 +705,7 @@
     <string name="sound_reverb_preset_hall">Aretoa</string>
     <string name="sound_reverb_preset_plate">Plaka</string>
     <string name="sound_reverb_preset_stadium">Estadioa</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">Aurreratua</string>
     <string name="sound_reverb_prefilter">Aurre-iragazkia</string>
     <string name="sound_reverb_indiff1">Sarrera-difusioa 1</string>

@@ -705,6 +705,7 @@
     <string name="sound_reverb_preset_hall">سالن</string>
     <string name="sound_reverb_preset_plate">پلیت</string>
     <string name="sound_reverb_preset_stadium">ورزشگاه</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
     <string name="sound_reverb_advanced">پیشرفته</string>
     <string name="sound_reverb_prefilter">پیش‌فیلتر</string>
     <string name="sound_reverb_indiff1">پخش ورودی ۱</string>
