@@ -87,7 +87,7 @@ fun registerMseNativeLib(targetName: String): TaskProvider<Exec> {
         workingDir(out)
         val arch = mseClangArch(targetName).joinToString(" ")
         val srcs = listOf(
-            "mse_host.c", "mse_ffmpeg.c", "mse_caps.c", "mse_vt.c", "mse_vt_blit.c", "audio_fx.c",
+            "mse_host.c", "mse_ffmpeg.c", "mse_caps.c", "mse_vt.c", "mse_vt_blit.c", "audio_fx.c", "verb.c",
             "vpresent.c", "vpresent_cpu.c", "vpresent_vt.c", "vpipe.c", "vpipe_hw_vt.c", "vt_overlay_none.c",
         )
             .joinToString(" ") { "'${mseNativeSrc.resolve(it)}'" }

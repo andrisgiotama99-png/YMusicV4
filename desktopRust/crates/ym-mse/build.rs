@@ -10,6 +10,7 @@ const COMMON_C: &[&str] = &[
     "mse_caps.c",
     "mse_vt.c",
     "audio_fx.c",
+    "verb.c",
     "vpresent.c",
     "vpresent_cpu.c",
     "vpipe.c",

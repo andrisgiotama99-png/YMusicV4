@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "verb.h"
+#include "verb_structs.h"
+
 /* WSOLA window frames: 20 ms up to 192 kHz. */
 #define AFX_WS_MAX 4096
 #define AFX_FIR 32
@@ -24,29 +27,6 @@ typedef struct {
     float b0, b1, b2, a1, a2;
     float z1[2], z2[2];
 } Biquad;
-
-/* One delay line of the Dattorro tank: a power-of-two ring with up to four read taps. */
-typedef struct {
-    float *buf;
-    int mask;
-    int base;
-    int tap[4];
-} RvDelay;
-
-/* Dattorro plate reverb tank: mono send, stereo output taps. */
-typedef struct {
-    RvDelay pre;
-    float preFilter;
-    RvDelay inDiff[4];
-    RvDelay decayDiff1[2];
-    RvDelay preDamp[2];
-    float damping[2];
-    RvDelay decayDiff2[2];
-    RvDelay postDamp[2];
-    float preFilterAmt, inDiff1Amt, inDiff2Amt, decayDiff1Amt, dampAmt, decayAmt, decayDiff2Amt;
-    int t;
-    int modCount, modStep, modAmp, modDir, modSteps;
-} RvTank;
 
 struct AudioFx {
     pthread_mutex_t mu;
@@ -91,14 +71,13 @@ struct AudioFx {
     int vis_w;
     int vis_n;
     float vis_hold[AFX_LEVELS];
-    /* Dattorro plate reverb, wet send only (mono send -> stereo taps). */
+    /* Dattorro plate reverb via el-visio/dattorro-verb, wet send only (mono send -> stereo taps). */
     int rv_active;
-    float rv_room, rv_damp, rv_mix, rv_pre_ms, rv_width;
-    float rv_preFilter, rv_inDiff1, rv_inDiff2, rv_decayDiff;
+    float rv_mix, rv_width;
     float rv_wet1, rv_wet2, rv_dry;
     float rv_wet1_cur, rv_wet2_cur, rv_dry_cur, rv_smooth;
     int rv_on;
-    RvTank rv;
+    DattorroVerb *rv;
 };
 
 static const float k_hz[AFX_BANDS] = {
@@ -232,259 +211,9 @@ static void chain_gain_db(const AudioFx *fx, float fs, float *loudness, float *m
     *max_boost = worst;
 }
 
-/* Dattorro plate reverb, adapted from el-visio/dattorro-verb (MIT, Pauli Pölkki 2022);
- * algorithm by Jon Dattorro, "Effect Design Part 1", CCRMA. The delay lengths are the paper's
- * 48 kHz numbers, scaled to the host rate; float here instead of double. Mono send, stereo taps. */
-
-static int rv_pow2(int n)
-{
-    int s = 1;
-    while (s < n)
-        s <<= 1;
-    return s;
-}
-
-static void rv_delay_alloc(RvDelay *d, int delay, int margin)
-{
-    int size = rv_pow2(delay + margin);
-    free(d->buf);
-    d->buf = (float *)calloc((size_t)size, sizeof(float));
-    d->mask = size - 1;
-    d->base = delay;
-    d->tap[0] = d->mask + 1 - delay;
-    d->tap[1] = d->tap[2] = d->tap[3] = 0;
-}
-
-static void rv_delay_tap(RvDelay *d, int tap, int delay)
-{
-    d->tap[tap] = d->mask + 1 - delay;
-}
-
-static void rv_delay_free(RvDelay *d)
-{
-    free(d->buf);
-    d->buf = NULL;
-}
-
-static void rv_delay_clear(RvDelay *d)
-{
-    if (d->buf)
-        memset(d->buf, 0, (size_t)(d->mask + 1) * sizeof(float));
-}
-
-static float rv_delay_rw(RvDelay *d, int t, float in)
-{
-    d->buf[t & d->mask] = in;
-    return d->buf[(t + d->tap[0]) & d->mask];
-}
-
-static void rv_delay_w(RvDelay *d, int t, float in)
-{
-    d->buf[t & d->mask] = in;
-}
-
-static float rv_delay_r(RvDelay *d, int tap, int t)
-{
-    return d->buf[(t + d->tap[tap]) & d->mask];
-}
-
-static float rv_apf(RvDelay *d, int t, float gain, float in)
-{
-    float delayed = rv_delay_r(d, 0, t);
-    in -= delayed * gain;
-    rv_delay_w(d, t, in);
-    return delayed + in * gain;
-}
-
-static float rv_lpf(float *state, float freq, float in)
-{
-    *state += (in - *state) * freq;
-    return *state;
-}
-
-static void rv_free_buffers(AudioFx *fx)
-{
-    RvTank *v = &fx->rv;
-    int i;
-    rv_delay_free(&v->pre);
-    for (i = 0; i < 4; i++)
-        rv_delay_free(&v->inDiff[i]);
-    for (i = 0; i < 2; i++) {
-        rv_delay_free(&v->decayDiff1[i]);
-        rv_delay_free(&v->preDamp[i]);
-        rv_delay_free(&v->decayDiff2[i]);
-        rv_delay_free(&v->postDamp[i]);
-    }
-}
-
-static void rv_clear_state(AudioFx *fx)
-{
-    RvTank *v = &fx->rv;
-    int i;
-    rv_delay_clear(&v->pre);
-    for (i = 0; i < 4; i++)
-        rv_delay_clear(&v->inDiff[i]);
-    for (i = 0; i < 2; i++) {
-        rv_delay_clear(&v->decayDiff1[i]);
-        rv_delay_clear(&v->preDamp[i]);
-        rv_delay_clear(&v->decayDiff2[i]);
-        rv_delay_clear(&v->postDamp[i]);
-        /* the modulated diffusor's read offset drifts; put it back at its base delay */
-        v->decayDiff1[i].tap[0] = v->decayDiff1[i].mask + 1 - v->decayDiff1[i].base;
-        v->damping[i] = 0.f;
-    }
-    v->preFilter = 0.f;
-    v->t = 0;
-    v->modCount = 0;
-    v->modSteps = 0;
-    v->modDir = -1;
-    fx->rv_wet1_cur = fx->rv_wet1;
-    fx->rv_wet2_cur = fx->rv_wet2;
-    fx->rv_dry_cur = fx->rv_dry;
-}
-
-/* Call with fx->mu held. Maps the user params onto the tank for the current rate. */
-static void rv_derive(AudioFx *fx)
-{
-    RvTank *v = &fx->rv;
-    float fs = (float)(fx->rate > 0 ? fx->rate : 48000);
-    float decay = clampf(0.1f + fx->rv_room * 0.8f, 0.1f, 0.9f);
-    int pre;
-    v->decayAmt = decay;
-    v->decayDiff2Amt = clampf(decay + 0.15f, 0.25f, 0.5f);
-    v->preFilterAmt = clampf(fx->rv_preFilter, 0.f, 1.f);
-    v->inDiff1Amt = clampf(fx->rv_inDiff1, 0.f, 1.f);
-    v->inDiff2Amt = clampf(fx->rv_inDiff2, 0.f, 1.f);
-    v->decayDiff1Amt = clampf(fx->rv_decayDiff, 0.f, 1.f);
-    /* Dattorro's damping is the LPF coefficient: high = bright, low = dark; the knob is the reverse. */
-    v->dampAmt = clampf(0.95f - fx->rv_damp * 0.75f, 0.05f, 0.99f);
-    pre = (int)(fx->rv_pre_ms * fs / 1000.f + 0.5f);
-    if (pre > v->pre.mask)
-        pre = v->pre.mask;
-    if (pre < 0)
-        pre = 0;
-    v->pre.tap[0] = v->pre.mask + 1 - pre;
-    fx->rv_dry = 1.f - fx->rv_mix;
-    fx->rv_wet1 = fx->rv_mix * (fx->rv_width / 2.f + 0.5f);
-    fx->rv_wet2 = fx->rv_mix * ((1.f - fx->rv_width) / 2.f);
-    fx->rv_smooth = 1.f - expf(-1.f / (AFX_RV_SMOOTH_S * fs));
-    fx->rv_on = fx->rv_active && fx->rv_mix > 0.001f;
-}
-
-/* (Re)build the delay lines for the current rate and clear them. Call with fx->mu held. */
-static void rv_alloc(AudioFx *fx)
-{
-    RvTank *v = &fx->rv;
-    float fs = (float)(fx->rate > 0 ? fx->rate : 48000);
-    float s = fs / 48000.f;
-    rv_free_buffers(fx);
-#define RV_S(x) ((int)((x) * s + 0.5f))
-    rv_delay_alloc(&v->pre, (int)(AFX_RV_PRE_MAX_MS * fs / 1000.f + 0.5f), 0);
-    rv_delay_alloc(&v->inDiff[0], RV_S(142), 0);
-    rv_delay_alloc(&v->inDiff[1], RV_S(107), 0);
-    rv_delay_alloc(&v->inDiff[2], RV_S(379), 0);
-    rv_delay_alloc(&v->inDiff[3], RV_S(277), 0);
-    rv_delay_alloc(&v->decayDiff1[0], RV_S(672), RV_S(64));
-    rv_delay_alloc(&v->preDamp[0], RV_S(4453), 0);
-    rv_delay_tap(&v->preDamp[0], 1, RV_S(353));
-    rv_delay_tap(&v->preDamp[0], 2, RV_S(3627));
-    rv_delay_tap(&v->preDamp[0], 3, RV_S(1990));
-    rv_delay_alloc(&v->decayDiff2[0], RV_S(1800), 0);
-    rv_delay_tap(&v->decayDiff2[0], 1, RV_S(187));
-    rv_delay_tap(&v->decayDiff2[0], 2, RV_S(1228));
-    rv_delay_alloc(&v->postDamp[0], RV_S(3720), 0);
-    rv_delay_tap(&v->postDamp[0], 1, RV_S(1066));
-    rv_delay_tap(&v->postDamp[0], 2, RV_S(2673));
-    rv_delay_alloc(&v->decayDiff1[1], RV_S(908), RV_S(64));
-    rv_delay_alloc(&v->preDamp[1], RV_S(4217), 0);
-    rv_delay_tap(&v->preDamp[1], 1, RV_S(266));
-    rv_delay_tap(&v->preDamp[1], 2, RV_S(2974));
-    rv_delay_tap(&v->preDamp[1], 3, RV_S(2111));
-    rv_delay_alloc(&v->decayDiff2[1], RV_S(2656), 0);
-    rv_delay_tap(&v->decayDiff2[1], 1, RV_S(335));
-    rv_delay_tap(&v->decayDiff2[1], 2, RV_S(1913));
-    rv_delay_alloc(&v->postDamp[1], RV_S(3163), 0);
-    rv_delay_tap(&v->postDamp[1], 1, RV_S(121));
-    rv_delay_tap(&v->postDamp[1], 2, RV_S(1996));
-#undef RV_S
-    v->modStep = (int)(2048.f * s + 0.5f);
-    if (v->modStep < 1)
-        v->modStep = 1;
-    v->modAmp = (int)(s + 0.5f);
-    if (v->modAmp < 1)
-        v->modAmp = 1;
-    /* the paper's fixed diffusor / input-filter amounts */
-    v->preFilterAmt = 0.85f;
-    v->inDiff1Amt = 0.75f;
-    v->inDiff2Amt = 0.625f;
-    v->decayDiff1Amt = 0.70f;
-    rv_clear_state(fx);
-}
-
-/* One mono sample into the tank. Call with fx->mu held. */
-static void rv_process(AudioFx *fx, float in)
-{
-    RvTank *v = &fx->rv;
-    int t = v->t;
-    int i;
-    float x, x1;
-    /* slow triangle modulation of the two decay diffusors' read offsets (kills metallic ringing) */
-    if (++v->modCount >= v->modStep) {
-        v->modCount = 0;
-        v->decayDiff1[0].tap[0] += v->modDir * v->modAmp;
-        v->decayDiff1[1].tap[0] += v->modDir * v->modAmp;
-        if (++v->modSteps >= 16) {
-            v->modSteps = 0;
-            v->modDir = -v->modDir;
-        }
-    }
-    x = rv_delay_rw(&v->pre, t, in);
-    x = rv_lpf(&v->preFilter, v->preFilterAmt, x);
-    x = rv_apf(&v->inDiff[0], t, v->inDiff1Amt, x);
-    x = rv_apf(&v->inDiff[1], t, v->inDiff1Amt, x);
-    x = rv_apf(&v->inDiff[2], t, v->inDiff2Amt, x);
-    x = rv_apf(&v->inDiff[3], t, v->inDiff2Amt, x);
-    for (i = 0; i < 2; i++) {
-        x1 = x + rv_delay_r(&v->postDamp[1 - i], 0, t) * v->decayAmt;
-        x1 = rv_apf(&v->decayDiff1[i], t, -v->decayDiff1Amt, x1);
-        x1 = rv_delay_rw(&v->preDamp[i], t, x1);
-        x1 = rv_lpf(&v->damping[i], v->dampAmt, x1);
-        x1 *= v->decayAmt;
-        x1 = rv_apf(&v->decayDiff2[i], t, v->decayDiff2Amt, x1);
-        rv_delay_w(&v->postDamp[i], t, x1);
-    }
-    v->t = (t + 1) & 0xFFFFF;
-}
-
-static float rv_get_left(AudioFx *fx)
-{
-    RvTank *v = &fx->rv;
-    int t = v->t;
-    float a;
-    a = rv_delay_r(&v->preDamp[1], 1, t);
-    a += rv_delay_r(&v->preDamp[1], 2, t);
-    a -= rv_delay_r(&v->decayDiff2[1], 2, t);
-    a += rv_delay_r(&v->postDamp[1], 2, t);
-    a -= rv_delay_r(&v->preDamp[0], 3, t);
-    a -= rv_delay_r(&v->decayDiff2[0], 1, t);
-    a += rv_delay_r(&v->postDamp[0], 1, t);
-    return a;
-}
-
-static float rv_get_right(AudioFx *fx)
-{
-    RvTank *v = &fx->rv;
-    int t = v->t;
-    float a;
-    a = rv_delay_r(&v->preDamp[0], 1, t);
-    a += rv_delay_r(&v->preDamp[0], 2, t);
-    a -= rv_delay_r(&v->decayDiff2[0], 2, t);
-    a += rv_delay_r(&v->postDamp[0], 2, t);
-    a -= rv_delay_r(&v->preDamp[1], 3, t);
-    a -= rv_delay_r(&v->decayDiff2[1], 1, t);
-    a += rv_delay_r(&v->postDamp[1], 1, t);
-    return a;
-}
+/* Dattorro plate reverb via el-visio/dattorro-verb (MIT, Pauli Pölkki 2022).
+ * The tank is created once and reconfigured via DattorroVerb_set* when params change.
+ * Delay lengths are fixed at 48 kHz; rate changes recreate the tank. */
 
 /* Call with fx->mu held (or before the instance is shared). */
 static void rebuild(AudioFx *fx)
@@ -513,7 +242,6 @@ static void rebuild(AudioFx *fx)
         fx->color_on = 1;
     if (fabsf(fx->volume - 1.f) >= 0.001f)
         fx->color_on = 1;
-    rv_derive(fx);
     if (fx->rv_on)
         fx->color_on = 1;
 }
@@ -529,15 +257,12 @@ AudioFx *audio_fx_create(void)
     fx->speed = 1.f;
     fx->pitch = 1.f;
     fx->lim_gain = 1.f;
-    fx->rv_preFilter = 0.85f;
-    fx->rv_inDiff1 = 0.75f;
-    fx->rv_inDiff2 = 0.625f;
-    fx->rv_decayDiff = 0.70f;
+    fx->rv = DattorroVerb_create();
     if (pthread_mutex_init(&fx->mu, NULL) != 0) {
+        DattorroVerb_delete(fx->rv);
         free(fx);
         return NULL;
     }
-    rv_alloc(fx);
     rebuild(fx);
     return fx;
 }
@@ -567,7 +292,7 @@ void audio_fx_destroy(AudioFx *fx)
     fx->mid = NULL;
     free(fx->xf);
     fx->xf = NULL;
-    rv_free_buffers(fx);
+    DattorroVerb_delete(fx->rv);
     pthread_mutex_unlock(&fx->mu);
     pthread_mutex_destroy(&fx->mu);
     free(fx);
@@ -588,7 +313,8 @@ void audio_fx_reset(AudioFx *fx)
     memset(fx->vis_hold, 0, sizeof(fx->vis_hold));
     fx->vis_w = 0;
     fx->vis_n = 0;
-    rv_clear_state(fx);
+    DattorroVerb_delete(fx->rv);
+    fx->rv = DattorroVerb_create();
     pthread_mutex_unlock(&fx->mu);
 }
 
@@ -603,7 +329,8 @@ void audio_fx_set_rate(AudioFx *fx, int rate)
         return;
     }
     fx->rate = rate;
-    rv_alloc(fx);
+    DattorroVerb_delete(fx->rv);
+    fx->rv = DattorroVerb_create();
     rebuild(fx);
     for (i = 0; i < AFX_BANDS; i++)
         bq_clear(&fx->peak[i]);
@@ -657,27 +384,28 @@ void audio_fx_set_virtualizer(AudioFx *fx, float width)
 void audio_fx_set_reverb(AudioFx *fx, const float params[AFX_REVERB_PARAMS])
 {
     int was_on;
-    float old_pre;
     if (!fx || !params)
         return;
     pthread_mutex_lock(&fx->mu);
     was_on = fx->rv_on;
-    old_pre = fx->rv_pre_ms;
     fx->rv_active = params[0] > 0.5f;
-    fx->rv_room = clampf(params[1], 0.f, 1.f);
-    fx->rv_damp = clampf(params[2], 0.f, 1.f);
     fx->rv_mix = clampf(params[3], 0.f, 1.f);
-    fx->rv_pre_ms = clampf(params[4], 0.f, AFX_RV_PRE_MAX_MS);
     fx->rv_width = clampf(params[5], 0.f, 1.f);
-    fx->rv_preFilter = clampf(params[6], 0.f, 1.f);
-    fx->rv_inDiff1 = clampf(params[7], 0.f, 1.f);
-    fx->rv_inDiff2 = clampf(params[8], 0.f, 1.f);
-    fx->rv_decayDiff = clampf(params[9], 0.f, 1.f);
-    rv_derive(fx);
-    if (fabsf(old_pre - fx->rv_pre_ms) >= 0.5f) {
-        if (fx->rv.pre.buf)
-            memset(fx->rv.pre.buf, 0, (size_t)(fx->rv.pre.mask + 1) * sizeof(float));
-    }
+    /* Map user params onto el-visio/dattorro-verb tank */
+    DattorroVerb_setPreDelay(fx->rv, clampf(params[4], 0.f, AFX_RV_PRE_MAX_MS) / 1000.0 * 48.0);
+    DattorroVerb_setPreFilter(fx->rv, clampf(params[6], 0.f, 1.f));
+    DattorroVerb_setInputDiffusion1(fx->rv, clampf(params[7], 0.f, 1.f));
+    DattorroVerb_setInputDiffusion2(fx->rv, clampf(params[8], 0.f, 1.f));
+    /* decay: room 0..1 -> decay 0.1..0.9 */
+    DattorroVerb_setDecay(fx->rv, 0.1 + clampf(params[1], 0.f, 1.f) * 0.8);
+    DattorroVerb_setDecayDiffusion(fx->rv, clampf(params[9], 0.f, 1.f));
+    /* damping: 0=dark(more damping), 1=bright(less damping) -> invert for dattorro-verb */
+    DattorroVerb_setDamping(fx->rv, 0.05 + (1.f - clampf(params[2], 0.f, 1.f)) * 0.94);
+    fx->rv_dry = 1.f - fx->rv_mix;
+    fx->rv_wet1 = fx->rv_mix * (fx->rv_width / 2.f + 0.5f);
+    fx->rv_wet2 = fx->rv_mix * ((1.f - fx->rv_width) / 2.f);
+    fx->rv_smooth = 1.f - expf(-1.f / (AFX_RV_SMOOTH_S * (float)(fx->rate > 0 ? fx->rate : 48000)));
+    fx->rv_on = fx->rv_active && fx->rv_mix > 0.001f;
     /* Entering from off: start at the target balance so the dry path never dips while the tank fills. */
     if (!was_on && fx->rv_on) {
         fx->rv_wet1_cur = fx->rv_wet1;
@@ -711,7 +439,7 @@ int audio_fx_reverb_tail_frames(AudioFx *fx)
         return 0;
     }
     /* Generous RT60 cover: ~0.8 s for small rooms up to ~3.3 s for a stadium, capped at 4 s. */
-    secs = 0.8f + fx->rv_room * 2.5f;
+    secs = 0.8f + fx->rv_mix * 2.5f;
     if (secs > 4.f)
         secs = 4.f;
     frames = (int)((float)fx->rate * secs);
@@ -884,9 +612,9 @@ void audio_fx_color(AudioFx *fx, int16_t *s16, int frames, int ch)
             if (fx->rv_on) {
                 float wl, wr, mono;
                 mono = nch > 1 ? 0.5f * (l + r) : l;
-                rv_process(fx, mono);
-                wl = rv_get_left(fx);
-                wr = rv_get_right(fx);
+                DattorroVerb_process(fx->rv, (double)mono);
+                wl = (float)DattorroVerb_getLeft(fx->rv);
+                wr = (float)DattorroVerb_getRight(fx->rv);
                 fx->rv_wet1_cur += (fx->rv_wet1 - fx->rv_wet1_cur) * fx->rv_smooth;
                 fx->rv_wet2_cur += (fx->rv_wet2 - fx->rv_wet2_cur) * fx->rv_smooth;
                 fx->rv_dry_cur += (fx->rv_dry - fx->rv_dry_cur) * fx->rv_smooth;
