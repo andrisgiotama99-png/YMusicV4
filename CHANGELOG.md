@@ -3,6 +3,7 @@
 ## 4.0.27
 
 ### NEW
+- Reverb: 7 presets baru (Chamber, Spring, Ambience, Cave, Arena, Vocal, Loft) dan knob editable (room, damp, mix, predelay, width) di equalizer sheet ([c089b854e](https://github.com/andrisgiotama99-png/YMusicV4/commit/c089b854e))
 - Desktop: full screen with or without the queue; F11 (Ctrl+Cmd+F on Mac) only makes the window full screen ([5dd025f84](https://github.com/ymusic-io/YMusicV4/commit/5dd025f84428002eaab92806b5ed4705f9f5448a))
 - Library: select several songs in the Folders tab ([8268c6cef](https://github.com/ymusic-io/YMusicV4/commit/8268c6cefae9d89e6a75de53d210ba5ce1a9ab8e))
 - Android: themed app icon on Android 13 and newer ([89934038e](https://github.com/ymusic-io/YMusicV4/commit/89934038ea557faafa6f8747b795007250b68c7f))
