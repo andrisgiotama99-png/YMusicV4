@@ -739,4 +739,5 @@
     <string name="sound_reverb_indiff1">Dyfuzja wejściowa 1</string>
     <string name="sound_reverb_indiff2">Dyfuzja wejściowa 2</string>
     <string name="sound_reverb_decaydiff">Dyfuzja zaniku</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

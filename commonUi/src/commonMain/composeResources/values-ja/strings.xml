@@ -700,4 +700,5 @@
     <string name="sound_reverb_indiff1">入力拡散 1</string>
     <string name="sound_reverb_indiff2">入力拡散 2</string>
     <string name="sound_reverb_decaydiff">減衰拡散</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

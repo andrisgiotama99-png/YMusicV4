@@ -700,4 +700,5 @@
     <string name="sound_reverb_indiff1">입력 디퓨전 1</string>
     <string name="sound_reverb_indiff2">입력 디퓨전 2</string>
     <string name="sound_reverb_decaydiff">감쇠 디퓨전</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

@@ -700,4 +700,5 @@
     <string name="sound_reverb_indiff1">Difusi input 1</string>
     <string name="sound_reverb_indiff2">Difusi input 2</string>
     <string name="sound_reverb_decaydiff">Difusi peluruhan</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

@@ -739,4 +739,5 @@
     <string name="sound_reverb_indiff1">Vstupní difuze 1</string>
     <string name="sound_reverb_indiff2">Vstupní difuze 2</string>
     <string name="sound_reverb_decaydiff">Difuze dozvuku</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

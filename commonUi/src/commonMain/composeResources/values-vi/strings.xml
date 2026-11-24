@@ -821,4 +821,5 @@
     <string name="sound_reverb_indiff1">Khuếch tán đầu vào 1</string>
     <string name="sound_reverb_indiff2">Khuếch tán đầu vào 2</string>
     <string name="sound_reverb_decaydiff">Khuếch tán suy giảm</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

@@ -726,4 +726,5 @@
     <string name="sound_reverb_indiff1">Улазна дифузија 1</string>
     <string name="sound_reverb_indiff2">Улазна дифузија 2</string>
     <string name="sound_reverb_decaydiff">Дифузија опадања</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

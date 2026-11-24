@@ -700,4 +700,5 @@
     <string name="sound_reverb_indiff1">การกระจายอินพุต 1</string>
     <string name="sound_reverb_indiff2">การกระจายอินพุต 2</string>
     <string name="sound_reverb_decaydiff">การกระจายการลดทอน</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

@@ -713,4 +713,5 @@
     <string name="sound_reverb_indiff1">Usambazaji wa ingizo 1</string>
     <string name="sound_reverb_indiff2">Usambazaji wa ingizo 2</string>
     <string name="sound_reverb_decaydiff">Usambazaji wa kufifia</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

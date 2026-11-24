@@ -895,4 +895,5 @@
     <string name="sound_reverb_indiff1">Вхідна дифузія 1</string>
     <string name="sound_reverb_indiff2">Вхідна дифузія 2</string>
     <string name="sound_reverb_decaydiff">Дифузія загасання</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

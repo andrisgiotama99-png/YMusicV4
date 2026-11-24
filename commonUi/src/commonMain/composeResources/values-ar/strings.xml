@@ -897,4 +897,5 @@
     <string name="sound_reverb_indiff1">انتشار المدخل 1</string>
     <string name="sound_reverb_indiff2">انتشار المدخل 2</string>
     <string name="sound_reverb_decaydiff">انتشار التلاشي</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

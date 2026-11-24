@@ -726,4 +726,5 @@
     <string name="sound_reverb_indiff1">Difuzie intrare 1</string>
     <string name="sound_reverb_indiff2">Difuzie intrare 2</string>
     <string name="sound_reverb_decaydiff">Difuzie atenuare</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

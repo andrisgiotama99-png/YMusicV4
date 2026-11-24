@@ -700,4 +700,5 @@
     <string name="sound_reverb_indiff1">Resapan input 1</string>
     <string name="sound_reverb_indiff2">Resapan input 2</string>
     <string name="sound_reverb_decaydiff">Resapan reput</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

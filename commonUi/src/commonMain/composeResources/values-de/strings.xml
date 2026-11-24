@@ -713,4 +713,5 @@
     <string name="sound_reverb_indiff1">Eingangsdiffusion 1</string>
     <string name="sound_reverb_indiff2">Eingangsdiffusion 2</string>
     <string name="sound_reverb_decaydiff">Abklingdiffusion</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>

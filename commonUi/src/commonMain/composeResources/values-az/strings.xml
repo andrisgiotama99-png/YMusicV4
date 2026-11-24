@@ -713,4 +713,5 @@
     <string name="sound_reverb_indiff1">Giriş diffuziyası 1</string>
     <string name="sound_reverb_indiff2">Giriş diffuziyası 2</string>
     <string name="sound_reverb_decaydiff">Sönmə diffuziyası</string>
+    <string name="sound_reverb_level">Reverb Level</string>
 </resources>
