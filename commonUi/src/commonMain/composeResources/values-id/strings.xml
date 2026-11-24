@@ -684,4 +684,20 @@
     <string name="downloads_cancel_selected_message">Bagian yang sudah diunduh akan dihapus.</string>
     <string name="downloads_cancel_selected_keep">Pertahankan</string>
     <string name="data_dir_unusable">YMusic tidak dapat membuka folder datanya, %1$s. Pastikan itu folder yang dapat Anda tulisi, lalu buka YMusic lagi. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Ukuran ruang</string>
+    <string name="sound_reverb_damp">Peredaman</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predelay</string>
+    <string name="sound_reverb_width">Lebar</string>
+    <string name="sound_reverb_preset_room">Ruang</string>
+    <string name="sound_reverb_preset_hall">Aula</string>
+    <string name="sound_reverb_preset_plate">Plate</string>
+    <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">Lanjutan</string>
+    <string name="sound_reverb_prefilter">Prafilter</string>
+    <string name="sound_reverb_indiff1">Difusi input 1</string>
+    <string name="sound_reverb_indiff2">Difusi input 2</string>
+    <string name="sound_reverb_decaydiff">Difusi peluruhan</string>
 </resources>

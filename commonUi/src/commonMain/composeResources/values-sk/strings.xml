@@ -723,4 +723,20 @@
     <string name="downloads_cancel_selected_message">Doteraz stiahnuté dáta sa odstránia.</string>
     <string name="downloads_cancel_selected_keep">Ponechať</string>
     <string name="data_dir_unusable">YMusic nemôže otvoriť svoj priečinok s údajmi, %1$s. Uistite sa, že je to priečinok, do ktorého môžete zapisovať, a potom YMusic otvorte znova. (%2$s)</string>
+    <string name="sound_reverb">Dozvuk</string>
+    <string name="sound_reverb_room">Veľkosť miestnosti</string>
+    <string name="sound_reverb_damp">Tlmenie</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predoneskorenie</string>
+    <string name="sound_reverb_width">Šírka</string>
+    <string name="sound_reverb_preset_room">Miestnosť</string>
+    <string name="sound_reverb_preset_hall">Sála</string>
+    <string name="sound_reverb_preset_plate">Doska</string>
+    <string name="sound_reverb_preset_stadium">Štadión</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">Pokročilé</string>
+    <string name="sound_reverb_prefilter">Vstupný filter</string>
+    <string name="sound_reverb_indiff1">Vstupná difúzia 1</string>
+    <string name="sound_reverb_indiff2">Vstupná difúzia 2</string>
+    <string name="sound_reverb_decaydiff">Difúzia dozvuku</string>
 </resources>

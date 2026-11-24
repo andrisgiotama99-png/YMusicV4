@@ -697,4 +697,20 @@
     <string name="downloads_cancel_selected_message">Մինչ այժմ ներբեռնվածը կջնջվի։</string>
     <string name="downloads_cancel_selected_keep">Պահել</string>
     <string name="data_dir_unusable">YMusic-ը չի կարող բացել իր տվյալների պանակը՝ %1$s։ Համոզվեք, որ այն պանակ է, որտեղ կարող եք գրել, ապա նորից բացեք YMusic-ը։ (%2$s)</string>
+    <string name="sound_reverb">Ռեվերբ</string>
+    <string name="sound_reverb_room">Սենյակի չափ</string>
+    <string name="sound_reverb_damp">Մարում</string>
+    <string name="sound_reverb_mix">Միքս</string>
+    <string name="sound_reverb_predelay">Նախնական ուշացում</string>
+    <string name="sound_reverb_width">Լայնություն</string>
+    <string name="sound_reverb_preset_room">Սենյակ</string>
+    <string name="sound_reverb_preset_hall">Դահլիճ</string>
+    <string name="sound_reverb_preset_plate">Սալիկ</string>
+    <string name="sound_reverb_preset_stadium">Մարզադաշտ</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">Ընդլայնված</string>
+    <string name="sound_reverb_prefilter">Նախնական ֆիլտր</string>
+    <string name="sound_reverb_indiff1">Մուտքային դիֆուզիա 1</string>
+    <string name="sound_reverb_indiff2">Մուտքային դիֆուզիա 2</string>
+    <string name="sound_reverb_decaydiff">Մարման դիֆուզիա</string>
 </resources>

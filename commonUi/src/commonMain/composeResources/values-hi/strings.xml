@@ -697,4 +697,20 @@
     <string name="downloads_cancel_selected_message">अब तक डाउनलोड किया गया हिस्सा मिटा दिया जाएगा।</string>
     <string name="downloads_cancel_selected_keep">रखें</string>
     <string name="data_dir_unusable">YMusic अपना डेटा फ़ोल्डर, %1$s, नहीं खोल पा रहा है। पक्का करें कि यह ऐसा फ़ोल्डर है जिसमें आप लिख सकते हैं, फिर YMusic को फिर से खोलें। (%2$s)</string>
+    <string name="sound_reverb">रिवर्ब</string>
+    <string name="sound_reverb_room">कमरे का आकार</string>
+    <string name="sound_reverb_damp">डैम्पिंग</string>
+    <string name="sound_reverb_mix">मिक्स</string>
+    <string name="sound_reverb_predelay">प्रीडिले</string>
+    <string name="sound_reverb_width">चौड़ाई</string>
+    <string name="sound_reverb_preset_room">कमरा</string>
+    <string name="sound_reverb_preset_hall">हॉल</string>
+    <string name="sound_reverb_preset_plate">प्लेट</string>
+    <string name="sound_reverb_preset_stadium">स्टेडियम</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">उन्नत</string>
+    <string name="sound_reverb_prefilter">प्री-फ़िल्टर</string>
+    <string name="sound_reverb_indiff1">इनपुट डिफ्यूज़न 1</string>
+    <string name="sound_reverb_indiff2">इनपुट डिफ्यूज़न 2</string>
+    <string name="sound_reverb_decaydiff">डिके डिफ्यूज़न</string>
 </resources>

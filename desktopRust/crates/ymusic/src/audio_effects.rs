@@ -2,12 +2,13 @@
 //! and applied to whichever engine plays.
 
 use ym_i18n::{Str, t};
-use ym_mse::Tone;
+use ym_mse::{Reverb, Tone};
 use ym_settings::SettingsStore;
 
 const SPEED_KEY: &str = "player.speed";
 const PITCH_KEY: &str = "player.pitch";
-/// bass, virtualizer, 10 bands, preamp: preamp last, so 12-value saves still load.
+/// bass, virtualizer, 10 bands, preamp, then reverb (enabled, room, damp, mix, predelay, width):
+/// appended last, so older 12/13-value saves still load.
 const EQ_KEY: &str = "player.eq";
 
 pub const SPEED_RANGE: (f32, f32) = (0.25, 4.0);
@@ -57,6 +58,20 @@ impl AudioEffects {
             if let Some(preamp) = saved.get(12) {
                 effects.tone.preamp_db = gain(*preamp);
             }
+            if let Some(active) = saved.get(13) {
+                effects.tone.reverb = Reverb {
+                    enabled: *active > 0.5,
+                    room: saved.get(14).copied().unwrap_or(0.5).clamp(0.0, 1.0),
+                    damp: saved.get(15).copied().unwrap_or(0.5).clamp(0.0, 1.0),
+                    mix: saved.get(16).copied().unwrap_or(0.3).clamp(0.0, 1.0),
+                    predelay_ms: saved.get(17).copied().unwrap_or(20.0).clamp(0.0, 200.0),
+                    width: saved.get(18).copied().unwrap_or(1.0).clamp(0.0, 1.0),
+                    pre_filter: saved.get(19).copied().unwrap_or(0.85).clamp(0.0, 1.0),
+                    input_diffusion1: saved.get(20).copied().unwrap_or(0.75).clamp(0.0, 1.0),
+                    input_diffusion2: saved.get(21).copied().unwrap_or(0.625).clamp(0.0, 1.0),
+                    decay_diffusion: saved.get(22).copied().unwrap_or(0.70).clamp(0.0, 1.0),
+                };
+            }
         }
         effects
     }
@@ -66,10 +81,32 @@ impl AudioEffects {
         let tone = &self.tone;
         let float = |value: f32| ym_settings::kotlin_float(value);
         let bands = tone.eq_db.iter().copied().map(float).collect::<Vec<_>>().join(",");
+        let rv = &tone.reverb;
+        let reverb = format!(
+            "{},{},{},{},{},{},{},{},{},{}",
+            if rv.enabled { "1" } else { "0" },
+            float(rv.room),
+            float(rv.damp),
+            float(rv.mix),
+            float(rv.predelay_ms),
+            float(rv.width),
+            float(rv.pre_filter),
+            float(rv.input_diffusion1),
+            float(rv.input_diffusion2),
+            float(rv.decay_diffusion),
+        );
         [
             (SPEED_KEY, float(self.speed)),
             (PITCH_KEY, float(self.pitch)),
-            (EQ_KEY, format!("{},{},{bands},{}", float(tone.bass_db), float(tone.virtualizer), float(tone.preamp_db))),
+            (
+                EQ_KEY,
+                format!(
+                    "{},{},{bands},{},{reverb}",
+                    float(tone.bass_db),
+                    float(tone.virtualizer),
+                    float(tone.preamp_db)
+                ),
+            ),
         ]
     }
 }
@@ -96,3 +133,101 @@ pub const EQ_PRESETS: [(Str, [f32; 10]); 9] = [
     (Str::SoundPresetClassical, [5.0, 4.0, 3.0, 2.0, -1.0, -1.0, 0.0, 2.0, 3.0, 4.0]),
     (Str::SoundPresetElectronic, [4.0, 3.0, 1.0, 0.0, -2.0, 2.0, 1.0, 2.0, 3.0, 4.0]),
 ];
+
+/// The reverb's named presets.
+pub const REVERB_PRESETS: [(Str, Reverb); 5] = [
+    (
+        Str::SoundReverbPresetRoom,
+        Reverb {
+            enabled: true,
+            room: 0.35,
+            damp: 0.6,
+            mix: 0.25,
+            predelay_ms: 10.0,
+            width: 0.8,
+            pre_filter: 0.85,
+            input_diffusion1: 0.75,
+            input_diffusion2: 0.625,
+            decay_diffusion: 0.70,
+        },
+    ),
+    (
+        Str::SoundReverbPresetHall,
+        Reverb {
+            enabled: true,
+            room: 0.75,
+            damp: 0.45,
+            mix: 0.35,
+            predelay_ms: 40.0,
+            width: 1.0,
+            pre_filter: 0.85,
+            input_diffusion1: 0.75,
+            input_diffusion2: 0.625,
+            decay_diffusion: 0.70,
+        },
+    ),
+    (
+        Str::SoundReverbPresetPlate,
+        Reverb {
+            enabled: true,
+            room: 0.85,
+            damp: 0.25,
+            mix: 0.4,
+            predelay_ms: 5.0,
+            width: 1.0,
+            pre_filter: 0.85,
+            input_diffusion1: 0.75,
+            input_diffusion2: 0.625,
+            decay_diffusion: 0.70,
+        },
+    ),
+    (
+        Str::SoundReverbPresetStadium,
+        Reverb {
+            enabled: true,
+            room: 0.95,
+            damp: 0.35,
+            mix: 0.45,
+            predelay_ms: 80.0,
+            width: 1.0,
+            pre_filter: 0.85,
+            input_diffusion1: 0.75,
+            input_diffusion2: 0.625,
+            decay_diffusion: 0.70,
+        },
+    ),
+    (
+        Str::SoundReverbPresetCathedral,
+        Reverb {
+            enabled: true,
+            room: 0.9,
+            damp: 0.3,
+            mix: 0.5,
+            predelay_ms: 50.0,
+            width: 1.0,
+            pre_filter: 0.85,
+            input_diffusion1: 0.75,
+            input_diffusion2: 0.625,
+            decay_diffusion: 0.70,
+        },
+    ),
+];
+
+/// The preset whose values `rv` matches (within a small tolerance), if any and enabled.
+pub fn reverb_preset_of(rv: &Reverb) -> Option<usize> {
+    if !rv.enabled {
+        return None;
+    }
+    REVERB_PRESETS.iter().position(|(_, p)| {
+        (rv.room - p.room).abs() < 0.02
+            && (rv.damp - p.damp).abs() < 0.02
+            && (rv.mix - p.mix).abs() < 0.02
+            && (rv.predelay_ms - p.predelay_ms).abs() < 2.0
+            && (rv.width - p.width).abs() < 0.02
+    })
+}
+
+/// The name of `rv`'s preset, or Custom.
+pub fn reverb_preset_name(rv: &Reverb) -> &'static str {
+    reverb_preset_of(rv).map(|index| t(REVERB_PRESETS[index].0)).unwrap_or(t(Str::SoundPresetCustom))
+}

@@ -697,4 +697,20 @@
     <string name="downloads_cancel_selected_message">İndiyədək yüklənənlər silinəcək.</string>
     <string name="downloads_cancel_selected_keep">Saxla</string>
     <string name="data_dir_unusable">YMusic məlumat qovluğunu (%1$s) aça bilmir. Bunun yaza biləcəyiniz qovluq olduğuna əmin olun, sonra YMusic-i yenidən açın. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Otaq ölçüsü</string>
+    <string name="sound_reverb_damp">Söndürmə</string>
+    <string name="sound_reverb_mix">Qarışıq</string>
+    <string name="sound_reverb_predelay">Ön gecikmə</string>
+    <string name="sound_reverb_width">En</string>
+    <string name="sound_reverb_preset_room">Otaq</string>
+    <string name="sound_reverb_preset_hall">Zal</string>
+    <string name="sound_reverb_preset_plate">Plate</string>
+    <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">Ətraflı</string>
+    <string name="sound_reverb_prefilter">Ön filtr</string>
+    <string name="sound_reverb_indiff1">Giriş diffuziyası 1</string>
+    <string name="sound_reverb_indiff2">Giriş diffuziyası 2</string>
+    <string name="sound_reverb_decaydiff">Sönmə diffuziyası</string>
 </resources>

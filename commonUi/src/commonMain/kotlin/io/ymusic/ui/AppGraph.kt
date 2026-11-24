@@ -10,6 +10,7 @@ import io.ymusic.mediastore.BetterMediaStore
 import io.ymusic.player.LoopMode
 import io.ymusic.player.PlayableItem
 import io.ymusic.player.Player
+import io.ymusic.player.ReverbConfig
 import io.ymusic.player.VideoQualityState
 import io.ymusic.remoteconfig.ApiService
 import io.ymusic.remoteconfig.RemoteConfigData
@@ -383,6 +384,22 @@ class AppGraph(
                     player.setVirtualizer(eq[1])
                     player.setEqBands(eq.drop(2).take(10))
                     eq.getOrNull(12)?.let { player.setPreamp(it) }
+                    eq.getOrNull(13)?.let { active ->
+                        player.setReverb(
+                            ReverbConfig(
+                                enabled = active > 0.5f,
+                                room = (eq.getOrNull(14) ?: 0.5f).coerceIn(0f, 1f),
+                                damp = (eq.getOrNull(15) ?: 0.5f).coerceIn(0f, 1f),
+                                mix = (eq.getOrNull(16) ?: 0.3f).coerceIn(0f, 1f),
+                                predelayMs = (eq.getOrNull(17) ?: 20f).coerceIn(0f, 200f),
+                                width = (eq.getOrNull(18) ?: 1f).coerceIn(0f, 1f),
+                                preFilter = (eq.getOrNull(19) ?: 0.85f).coerceIn(0f, 1f),
+                                inputDiffusion1 = (eq.getOrNull(20) ?: 0.75f).coerceIn(0f, 1f),
+                                inputDiffusion2 = (eq.getOrNull(21) ?: 0.625f).coerceIn(0f, 1f),
+                                decayDiffusion = (eq.getOrNull(22) ?: 0.70f).coerceIn(0f, 1f),
+                            ),
+                        )
+                    }
                 }
             }
             launch {
@@ -396,14 +413,22 @@ class AppGraph(
                     .collect { settings.putString(PlaybackAudioOnlyKey, if (it) "1" else "0") }
             }
             launch {
-                player.config.map { listOf(it.volume, it.speed, it.pitchFactor) to Triple(it.bassBoostDb, it.virtualizer, it.eqBands to it.preampDb) }
+                player.config.map { Triple(listOf(it.volume, it.speed, it.pitchFactor), Triple(it.bassBoostDb, it.virtualizer, it.eqBands to it.preampDb), it.reverb) }
                     .distinctUntilChanged()
-                    .collect { (levels, eq) ->
+                    .collect { (levels, eq, rv) ->
                         settings.putString(PlaybackVolumeKey, levels[0].toString())
                         settings.putString(PlaybackSpeedKey, levels[1].toString())
                         settings.putString(PlaybackPitchKey, levels[2].toString())
-                        // bass, virtualizer, 10 bands, preamp — preamp last so 12-value saves still load.
-                        settings.putString(PlaybackEqKey, "${eq.first},${eq.second},${eq.third.first.joinToString(",")},${eq.third.second}")
+                        // bass, virtualizer, 10 bands, preamp, then reverb (enabled, room, damp, mix, predelay, width) —
+                        // appended last so older 12/13-value saves still load.
+                        val reverb = listOf(
+                            if (rv.enabled) "1" else "0",
+                            rv.room.toString(), rv.damp.toString(), rv.mix.toString(),
+                            rv.predelayMs.toString(), rv.width.toString(),
+                            rv.preFilter.toString(), rv.inputDiffusion1.toString(),
+                            rv.inputDiffusion2.toString(), rv.decayDiffusion.toString(),
+                        ).joinToString(",")
+                        settings.putString(PlaybackEqKey, "${eq.first},${eq.second},${eq.third.first.joinToString(",")},${eq.third.second},$reverb")
                     }
             }
         }

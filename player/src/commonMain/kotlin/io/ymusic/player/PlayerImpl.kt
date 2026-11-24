@@ -117,7 +117,7 @@ internal class PlayerImpl(
             if (it.inAppAudioFx) {
                 it
             } else {
-                it.copy(eqBands = List(10) { 0f }, bassBoostDb = 0f, virtualizer = 1f, preampDb = 0f)
+                it.copy(eqBands = List(10) { 0f }, bassBoostDb = 0f, virtualizer = 1f, preampDb = 0f, reverb = it.reverb.copy(enabled = false))
             }
         }.let {
             val duck = minOf(if (ducked) DUCK_VOLUME else 1f, if (voiceDucked) VOICE_DUCK_VOLUME else 1f)
@@ -398,6 +398,8 @@ internal class PlayerImpl(
         pushConfig(currentConfig.copy(virtualizer = width.coerceIn(0.5f, 2f)))
 
     override fun setPreamp(db: Float) = pushConfig(currentConfig.copy(preampDb = db.coerceIn(-12f, 12f)))
+
+    override fun setReverb(reverb: ReverbConfig) = pushConfig(currentConfig.copy(reverb = reverb))
 
     override fun setInAppAudioFx(enabled: Boolean) = pushConfig(currentConfig.copy(inAppAudioFx = enabled))
 

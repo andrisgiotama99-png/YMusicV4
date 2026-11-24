@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "verb.h"
+#include "verb_structs.h"
+
 /* WSOLA window frames: 20 ms up to 192 kHz. */
 #define AFX_WS_MAX 4096
 #define AFX_FIR 32
@@ -16,6 +19,8 @@
 #define AFX_LIMIT_ABSORB_DB 6.f
 #define AFX_MAKEUP_DB 3.f
 #define AFX_GRID 48
+#define AFX_RV_PRE_MAX_MS 200.f
+#define AFX_RV_SMOOTH_S 0.03f
 #define PI 3.14159265358979323846f
 
 typedef struct {
@@ -66,6 +71,13 @@ struct AudioFx {
     int vis_w;
     int vis_n;
     float vis_hold[AFX_LEVELS];
+    /* Dattorro plate reverb via el-visio/dattorro-verb, wet send only (mono send -> stereo taps). */
+    int rv_active;
+    float rv_mix, rv_width;
+    float rv_wet1, rv_wet2, rv_dry;
+    float rv_wet1_cur, rv_wet2_cur, rv_dry_cur, rv_smooth;
+    int rv_on;
+    DattorroVerb *rv;
 };
 
 static const float k_hz[AFX_BANDS] = {
@@ -199,6 +211,10 @@ static void chain_gain_db(const AudioFx *fx, float fs, float *loudness, float *m
     *max_boost = worst;
 }
 
+/* Dattorro plate reverb via el-visio/dattorro-verb (MIT, Pauli Pölkki 2022).
+ * The tank is created once and reconfigured via DattorroVerb_set* when params change.
+ * Delay lengths are fixed at 48 kHz; rate changes recreate the tank. */
+
 /* Call with fx->mu held (or before the instance is shared). */
 static void rebuild(AudioFx *fx)
 {
@@ -226,6 +242,8 @@ static void rebuild(AudioFx *fx)
         fx->color_on = 1;
     if (fabsf(fx->volume - 1.f) >= 0.001f)
         fx->color_on = 1;
+    if (fx->rv_on)
+        fx->color_on = 1;
 }
 
 AudioFx *audio_fx_create(void)
@@ -239,7 +257,9 @@ AudioFx *audio_fx_create(void)
     fx->speed = 1.f;
     fx->pitch = 1.f;
     fx->lim_gain = 1.f;
+    fx->rv = DattorroVerb_create();
     if (pthread_mutex_init(&fx->mu, NULL) != 0) {
+        DattorroVerb_delete(fx->rv);
         free(fx);
         return NULL;
     }
@@ -272,6 +292,7 @@ void audio_fx_destroy(AudioFx *fx)
     fx->mid = NULL;
     free(fx->xf);
     fx->xf = NULL;
+    DattorroVerb_delete(fx->rv);
     pthread_mutex_unlock(&fx->mu);
     pthread_mutex_destroy(&fx->mu);
     free(fx);
@@ -292,6 +313,8 @@ void audio_fx_reset(AudioFx *fx)
     memset(fx->vis_hold, 0, sizeof(fx->vis_hold));
     fx->vis_w = 0;
     fx->vis_n = 0;
+    DattorroVerb_delete(fx->rv);
+    fx->rv = DattorroVerb_create();
     pthread_mutex_unlock(&fx->mu);
 }
 
@@ -306,6 +329,8 @@ void audio_fx_set_rate(AudioFx *fx, int rate)
         return;
     }
     fx->rate = rate;
+    DattorroVerb_delete(fx->rv);
+    fx->rv = DattorroVerb_create();
     rebuild(fx);
     for (i = 0; i < AFX_BANDS; i++)
         bq_clear(&fx->peak[i]);
@@ -354,6 +379,72 @@ void audio_fx_set_virtualizer(AudioFx *fx, float width)
     fx->width = clampf(width, 0.f, 2.f);
     rebuild(fx);
     pthread_mutex_unlock(&fx->mu);
+}
+
+void audio_fx_set_reverb(AudioFx *fx, const float params[AFX_REVERB_PARAMS])
+{
+    int was_on;
+    if (!fx || !params)
+        return;
+    pthread_mutex_lock(&fx->mu);
+    was_on = fx->rv_on;
+    fx->rv_active = params[0] > 0.5f;
+    fx->rv_mix = clampf(params[3], 0.f, 1.f);
+    fx->rv_width = clampf(params[5], 0.f, 1.f);
+    /* Map user params onto el-visio/dattorro-verb tank */
+    DattorroVerb_setPreDelay(fx->rv, clampf(params[4], 0.f, AFX_RV_PRE_MAX_MS) / 1000.0 * 48.0);
+    DattorroVerb_setPreFilter(fx->rv, clampf(params[6], 0.f, 1.f));
+    DattorroVerb_setInputDiffusion1(fx->rv, clampf(params[7], 0.f, 1.f));
+    DattorroVerb_setInputDiffusion2(fx->rv, clampf(params[8], 0.f, 1.f));
+    /* decay: room 0..1 -> decay 0.1..0.9 */
+    DattorroVerb_setDecay(fx->rv, 0.1 + clampf(params[1], 0.f, 1.f) * 0.8);
+    DattorroVerb_setDecayDiffusion(fx->rv, clampf(params[9], 0.f, 1.f));
+    /* damping: 0=dark(more damping), 1=bright(less damping) -> invert for dattorro-verb */
+    DattorroVerb_setDamping(fx->rv, 0.05 + (1.f - clampf(params[2], 0.f, 1.f)) * 0.94);
+    fx->rv_dry = 1.f - fx->rv_mix;
+    fx->rv_wet1 = fx->rv_mix * (fx->rv_width / 2.f + 0.5f);
+    fx->rv_wet2 = fx->rv_mix * ((1.f - fx->rv_width) / 2.f);
+    fx->rv_smooth = 1.f - expf(-1.f / (AFX_RV_SMOOTH_S * (float)(fx->rate > 0 ? fx->rate : 48000)));
+    fx->rv_on = fx->rv_active && fx->rv_mix > 0.001f;
+    /* Entering from off: start at the target balance so the dry path never dips while the tank fills. */
+    if (!was_on && fx->rv_on) {
+        fx->rv_wet1_cur = fx->rv_wet1;
+        fx->rv_wet2_cur = fx->rv_wet2;
+        fx->rv_dry_cur = fx->rv_dry;
+    }
+    rebuild(fx);
+    pthread_mutex_unlock(&fx->mu);
+}
+
+int audio_fx_reverb_active(AudioFx *fx)
+{
+    int a;
+    if (!fx)
+        return 0;
+    pthread_mutex_lock(&fx->mu);
+    a = fx->rv_active;
+    pthread_mutex_unlock(&fx->mu);
+    return a;
+}
+
+int audio_fx_reverb_tail_frames(AudioFx *fx)
+{
+    int frames;
+    float secs;
+    if (!fx)
+        return 0;
+    pthread_mutex_lock(&fx->mu);
+    if (!fx->rv_active || fx->rate <= 0) {
+        pthread_mutex_unlock(&fx->mu);
+        return 0;
+    }
+    /* Generous RT60 cover: ~0.8 s for small rooms up to ~3.3 s for a stadium, capped at 4 s. */
+    secs = 0.8f + fx->rv_mix * 2.5f;
+    if (secs > 4.f)
+        secs = 4.f;
+    frames = (int)((float)fx->rate * secs);
+    pthread_mutex_unlock(&fx->mu);
+    return frames;
 }
 
 void audio_fx_set_preamp(AudioFx *fx, float db)
@@ -518,6 +609,22 @@ void audio_fx_color(AudioFx *fx, int16_t *s16, int frames, int ch)
             l = bq_tick(&fx->bass, 0, l);
             if (nch > 1)
                 r = bq_tick(&fx->bass, 1, r);
+            if (fx->rv_on) {
+                float wl, wr, mono;
+                mono = nch > 1 ? 0.5f * (l + r) : l;
+                DattorroVerb_process(fx->rv, (double)mono);
+                wl = (float)DattorroVerb_getLeft(fx->rv);
+                wr = (float)DattorroVerb_getRight(fx->rv);
+                fx->rv_wet1_cur += (fx->rv_wet1 - fx->rv_wet1_cur) * fx->rv_smooth;
+                fx->rv_wet2_cur += (fx->rv_wet2 - fx->rv_wet2_cur) * fx->rv_smooth;
+                fx->rv_dry_cur += (fx->rv_dry - fx->rv_dry_cur) * fx->rv_smooth;
+                if (nch > 1) {
+                    l = l * fx->rv_dry_cur + wl * fx->rv_wet1_cur + wr * fx->rv_wet2_cur;
+                    r = r * fx->rv_dry_cur + wr * fx->rv_wet1_cur + wl * fx->rv_wet2_cur;
+                } else {
+                    l = l * fx->rv_dry_cur + 0.5f * (wl + wr) * (fx->rv_wet1_cur + fx->rv_wet2_cur);
+                }
+            }
             if (nch > 1 && fabsf(fx->width - 1.f) >= 0.02f) {
                 mid = 0.5f * (l + r);
                 side = 0.5f * (l - r) * fx->width;

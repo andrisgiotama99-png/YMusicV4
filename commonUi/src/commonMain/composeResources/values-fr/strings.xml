@@ -710,4 +710,20 @@
     <string name="downloads_cancel_selected_message">Ce qui a déjà été téléchargé sera supprimé.</string>
     <string name="downloads_cancel_selected_keep">Conserver</string>
     <string name="data_dir_unusable">YMusic ne peut pas ouvrir son dossier de données, %1$s. Vérifiez qu'il s'agit d'un dossier dans lequel vous pouvez écrire, puis rouvrez YMusic. (%2$s)</string>
+    <string name="sound_reverb">Réverbération</string>
+    <string name="sound_reverb_room">Taille de la pièce</string>
+    <string name="sound_reverb_damp">Amortissement</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Prédélai</string>
+    <string name="sound_reverb_width">Largeur</string>
+    <string name="sound_reverb_preset_room">Pièce</string>
+    <string name="sound_reverb_preset_hall">Salle</string>
+    <string name="sound_reverb_preset_plate">Plaque</string>
+    <string name="sound_reverb_preset_stadium">Stade</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">Avancé</string>
+    <string name="sound_reverb_prefilter">Préfiltre</string>
+    <string name="sound_reverb_indiff1">Diffusion d\'entrée 1</string>
+    <string name="sound_reverb_indiff2">Diffusion d\'entrée 2</string>
+    <string name="sound_reverb_decaydiff">Diffusion de décroissance</string>
 </resources>

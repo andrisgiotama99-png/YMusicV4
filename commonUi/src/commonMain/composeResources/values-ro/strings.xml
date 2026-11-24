@@ -710,4 +710,20 @@
     <string name="downloads_cancel_selected_message">Ce s-a descărcat până acum va fi șters.</string>
     <string name="downloads_cancel_selected_keep">Păstrează</string>
     <string name="data_dir_unusable">YMusic nu își poate deschide dosarul de date, %1$s. Asigură-te că este un dosar în care poți scrie, apoi deschide din nou YMusic. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Dimensiune cameră</string>
+    <string name="sound_reverb_damp">Atenuare</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predelay</string>
+    <string name="sound_reverb_width">Lățime</string>
+    <string name="sound_reverb_preset_room">Cameră</string>
+    <string name="sound_reverb_preset_hall">Sală</string>
+    <string name="sound_reverb_preset_plate">Placă</string>
+    <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">Avansat</string>
+    <string name="sound_reverb_prefilter">Prefiltru</string>
+    <string name="sound_reverb_indiff1">Difuzie intrare 1</string>
+    <string name="sound_reverb_indiff2">Difuzie intrare 2</string>
+    <string name="sound_reverb_decaydiff">Difuzie atenuare</string>
 </resources>

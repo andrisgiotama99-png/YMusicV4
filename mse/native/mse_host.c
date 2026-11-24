@@ -121,6 +121,8 @@ struct MseHost {
     float speed;
     int64_t samples_played;
     int64_t samples_pulled;
+    /* Reverb tail frames still to feed as silence at end-of-stream (0 = none / reverb off). mu. */
+    int rv_tail_left;
     /* When audio started waiting for video data (now_ns), 0 while it is not. */
     double v_starve_ns;
     double v_starve_end_ns;
@@ -660,6 +662,7 @@ static void ring_flush(MseHost *h)
     h->dac_cp_n = 0;
     h->pcm_anchor = 1;
     h->audio_out = 0;
+    h->rv_tail_left = 0;
 #ifdef __ANDROID__
     h->dac_live = 0;
     h->dac_drain = 0;
@@ -1034,9 +1037,29 @@ static void audio_out_check(MseHost *h)
     t = host_clock(h);
     pthread_mutex_lock(&h->mu);
     if (h->playing && h->eos && !h->audio_out && h->ring_n <= 0) {
-        h->hold = t;
-        h->origin_ns = now_ns();
-        h->audio_out = 1;
+        if (h->rv_tail_left > 0 && h->ring && h->ch > 0 && h->rate > 0 && audio_fx_reverb_active(h->fx)) {
+            /* Feed the reverb tail as silence through the ring; the DAC colors it on drain, so the
+               plate rings out before the stream is declared ended. Gated on reverb-active. */
+            int fb = frame_bytes(h);
+            int wf = h->rate / 10;
+            uint8_t *z;
+            if (wf > h->rv_tail_left)
+                wf = h->rv_tail_left;
+            if (wf < 1)
+                wf = 1;
+            z = (uint8_t *)calloc((size_t)wf, (size_t)fb);
+            if (z) {
+                ring_write(h, z, wf * fb);
+                free(z);
+                h->rv_tail_left -= wf;
+            } else {
+                h->rv_tail_left = 0;
+            }
+        } else {
+            h->hold = t;
+            h->origin_ns = now_ns();
+            h->audio_out = 1;
+        }
     }
     pthread_mutex_unlock(&h->mu);
 }
@@ -1322,6 +1345,43 @@ static void *dec_loop(void *arg)
                 pthread_mutex_lock(&h->mu);
                 h->samples_pulled += frames;
                 pthread_mutex_unlock(&h->mu);
+            }
+        } else {
+            /* End-of-stream reverb tail: feed silence through color + on_pcm so the plate rings out
+               before 'ended'. The sink's bounded write paces it to real time. Gated reverb-active. */
+            int wf = 0, rate = 0, ch = 0;
+            MsePcmFn cb = NULL;
+            void *user = NULL;
+            pthread_mutex_lock(&h->mu);
+            if (h->eos && h->rv_tail_left > 0 && h->fx && h->ch > 0 && h->rate > 0 &&
+                audio_fx_reverb_active(h->fx)) {
+                wf = h->rate / 10;
+                if (wf > h->rv_tail_left)
+                    wf = h->rv_tail_left;
+                if (wf < 1)
+                    wf = 1;
+                rate = h->rate;
+                ch = h->ch;
+                cb = h->on_pcm;
+                user = h->user;
+            }
+            pthread_mutex_unlock(&h->mu);
+            if (wf > 0) {
+                int16_t *z = (int16_t *)calloc((size_t)wf * ch, sizeof(int16_t));
+                if (z) {
+                    audio_fx_color(h->fx, z, wf, ch);
+                    if (cb)
+                        cb(user, rate, ch, z, wf * ch * (int)sizeof(int16_t));
+                    free(z);
+                    pthread_mutex_lock(&h->mu);
+                    h->rv_tail_left -= wf;
+                    h->samples_pulled += wf;
+                    pthread_mutex_unlock(&h->mu);
+                } else {
+                    pthread_mutex_lock(&h->mu);
+                    h->rv_tail_left = 0;
+                    pthread_mutex_unlock(&h->mu);
+                }
             }
         }
 #endif
@@ -1785,6 +1845,7 @@ static void seek_common(MseHost *h, double seconds)
     h->origin_ns = now_ns();
     h->eos = 0;
     h->ended_sent = 0;
+    h->rv_tail_left = 0;
     h->v_starve_ns = 0;
     h->v_starve_end_ns = 0;
     h->v_start_t = seconds;
@@ -1828,6 +1889,7 @@ void mse_host_reset(MseHost *h)
     h->origin_ns = 0;
     h->eos = 0;
     h->ended_sent = 0;
+    h->rv_tail_left = 0;
     h->vw = 0;
     h->vh = 0;
 #ifdef MSE_DAC
@@ -1951,6 +2013,10 @@ static int audio_done(MseHost *h)
     out = h->audio_out;
 #else
     ring_empty = 1;
+    if (h->rv_tail_left > 0) {
+        pthread_mutex_unlock(&h->mu);
+        return 0;
+    }
 #endif
     pthread_mutex_unlock(&h->mu);
     if (!ring_empty)
@@ -1989,6 +2055,7 @@ void mse_host_end_of_stream(MseHost *h)
         return;
     pthread_mutex_lock(&h->mu);
     h->eos = 1;
+    h->rv_tail_left = audio_fx_reverb_tail_frames(h->fx);
     pthread_mutex_unlock(&h->mu);
     host_fed(h);
     maybe_notify_ended(h);
@@ -2464,6 +2531,12 @@ void mse_host_set_virtualizer(MseHost *h, float width)
 {
     if (h && h->fx)
         audio_fx_set_virtualizer(h->fx, width);
+}
+
+void mse_host_set_reverb(MseHost *h, const float params[10])
+{
+    if (h && h->fx)
+        audio_fx_set_reverb(h->fx, params);
 }
 
 /* Frames colored at the DAC pull but still queued ahead of the playhead (same model as the clock). */

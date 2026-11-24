@@ -684,4 +684,20 @@
     <string name="downloads_cancel_selected_message">ส่วนที่ดาวน์โหลดไปแล้วจะถูกลบ</string>
     <string name="downloads_cancel_selected_keep">เก็บไว้</string>
     <string name="data_dir_unusable">YMusic เปิดโฟลเดอร์ข้อมูลของแอป %1$s ไม่ได้ ตรวจสอบว่าเป็นโฟลเดอร์ที่คุณเขียนได้ แล้วเปิด YMusic อีกครั้ง (%2$s)</string>
+    <string name="sound_reverb">รีเวิร์บ</string>
+    <string name="sound_reverb_room">ขนาดห้อง</string>
+    <string name="sound_reverb_damp">การหน่วง</string>
+    <string name="sound_reverb_mix">มิกซ์</string>
+    <string name="sound_reverb_predelay">พรีดีเลย์</string>
+    <string name="sound_reverb_width">ความกว้าง</string>
+    <string name="sound_reverb_preset_room">ห้อง</string>
+    <string name="sound_reverb_preset_hall">ฮอลล์</string>
+    <string name="sound_reverb_preset_plate">แผ่น</string>
+    <string name="sound_reverb_preset_stadium">สนามกีฬา</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">ขั้นสูง</string>
+    <string name="sound_reverb_prefilter">พรีฟิลเตอร์</string>
+    <string name="sound_reverb_indiff1">การกระจายอินพุต 1</string>
+    <string name="sound_reverb_indiff2">การกระจายอินพุต 2</string>
+    <string name="sound_reverb_decaydiff">การกระจายการลดทอน</string>
 </resources>

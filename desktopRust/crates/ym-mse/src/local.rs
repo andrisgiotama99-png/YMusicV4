@@ -33,6 +33,7 @@ unsafe extern "C" {
     fn file_av_set_bass(player: *mut c_void, db: f32);
     fn file_av_set_virtualizer(player: *mut c_void, width: f32);
     fn file_av_set_preamp(player: *mut c_void, db: f32);
+    fn file_av_set_reverb(player: *mut c_void, params: *const f32);
     fn file_av_pcm_levels(player: *mut c_void, out: *mut f32, count: c_int) -> c_int;
     fn file_av_frames(player: *mut c_void) -> c_int;
     fn file_av_bind_presenter(player: *mut c_void, presenter: *mut c_void);
@@ -256,6 +257,7 @@ impl LocalAv {
             file_av_set_bass(self.raw, tone.bass_db);
             file_av_set_virtualizer(self.raw, tone.virtualizer);
             file_av_set_preamp(self.raw, tone.preamp_db);
+            file_av_set_reverb(self.raw, tone.reverb.params().as_ptr());
         }
     }
 

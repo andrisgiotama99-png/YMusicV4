@@ -697,4 +697,20 @@
     <string name="downloads_cancel_selected_message">ഇതുവരെ ഡൗൺലോഡ് ചെയ്തത് ഇല്ലാതാക്കും.</string>
     <string name="downloads_cancel_selected_keep">നിലനിർത്തുക</string>
     <string name="data_dir_unusable">YMusic-ന് അതിന്റെ ഡാറ്റ ഫോൾഡർ, %1$s, തുറക്കാൻ കഴിയുന്നില്ല. നിങ്ങൾക്ക് എഴുതാൻ കഴിയുന്ന ഒരു ഫോൾഡറാണെന്ന് ഉറപ്പാക്കുക, തുടർന്ന് YMusic വീണ്ടും തുറക്കുക. (%2$s)</string>
+    <string name="sound_reverb">റിവർബ്</string>
+    <string name="sound_reverb_room">റൂം വലുപ്പം</string>
+    <string name="sound_reverb_damp">ഡാമ്പിംഗ്</string>
+    <string name="sound_reverb_mix">മിക്സ്</string>
+    <string name="sound_reverb_predelay">പ്രീഡിലേ</string>
+    <string name="sound_reverb_width">വീതി</string>
+    <string name="sound_reverb_preset_room">റൂം</string>
+    <string name="sound_reverb_preset_hall">ഹാൾ</string>
+    <string name="sound_reverb_preset_plate">പ്ലേറ്റ്</string>
+    <string name="sound_reverb_preset_stadium">സ്റ്റേഡിയം</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">വിപുലമായ</string>
+    <string name="sound_reverb_prefilter">പ്രീ-ഫിൽട്ടർ</string>
+    <string name="sound_reverb_indiff1">ഇൻപുട്ട് ഡിഫ്യൂഷൻ 1</string>
+    <string name="sound_reverb_indiff2">ഇൻപുട്ട് ഡിഫ്യൂഷൻ 2</string>
+    <string name="sound_reverb_decaydiff">ഡികെ ഡിഫ്യൂഷൻ</string>
 </resources>

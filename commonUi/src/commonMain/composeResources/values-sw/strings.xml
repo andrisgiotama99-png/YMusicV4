@@ -697,4 +697,20 @@
     <string name="downloads_cancel_selected_message">Kilichopakuliwa hadi sasa kitafutwa.</string>
     <string name="downloads_cancel_selected_keep">Usighairi</string>
     <string name="data_dir_unusable">YMusic haiwezi kufungua folda yake ya data, %1$s. Hakikisha ni folda unayoweza kuandika ndani yake, kisha ufungue YMusic tena. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Ukubwa wa chumba</string>
+    <string name="sound_reverb_damp">Ufifishaji</string>
+    <string name="sound_reverb_mix">Mchanganyiko</string>
+    <string name="sound_reverb_predelay">Ucheleweshaji wa awali</string>
+    <string name="sound_reverb_width">Upana</string>
+    <string name="sound_reverb_preset_room">Chumba</string>
+    <string name="sound_reverb_preset_hall">Ukumbi</string>
+    <string name="sound_reverb_preset_plate">Plate</string>
+    <string name="sound_reverb_preset_stadium">Uwanja</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">Kina</string>
+    <string name="sound_reverb_prefilter">Kichujio cha awali</string>
+    <string name="sound_reverb_indiff1">Usambazaji wa ingizo 1</string>
+    <string name="sound_reverb_indiff2">Usambazaji wa ingizo 2</string>
+    <string name="sound_reverb_decaydiff">Usambazaji wa kufifia</string>
 </resources>

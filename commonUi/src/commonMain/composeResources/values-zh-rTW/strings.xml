@@ -684,4 +684,20 @@
     <string name="downloads_cancel_selected_message">已下載的部分將會刪除。</string>
     <string name="downloads_cancel_selected_keep">保留</string>
     <string name="data_dir_unusable">YMusic 無法開啟其資料夾 %1$s。請確認這是你可以寫入的資料夾，然後重新開啟 YMusic。(%2$s)</string>
+    <string name="sound_reverb">混響</string>
+    <string name="sound_reverb_room">房間大小</string>
+    <string name="sound_reverb_damp">阻尼</string>
+    <string name="sound_reverb_mix">混合</string>
+    <string name="sound_reverb_predelay">預延遲</string>
+    <string name="sound_reverb_width">寬度</string>
+    <string name="sound_reverb_preset_room">房間</string>
+    <string name="sound_reverb_preset_hall">大廳</string>
+    <string name="sound_reverb_preset_plate">板式</string>
+    <string name="sound_reverb_preset_stadium">體育場</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">進階</string>
+    <string name="sound_reverb_prefilter">預濾波</string>
+    <string name="sound_reverb_indiff1">輸入擴散 1</string>
+    <string name="sound_reverb_indiff2">輸入擴散 2</string>
+    <string name="sound_reverb_decaydiff">衰減擴散</string>
 </resources>

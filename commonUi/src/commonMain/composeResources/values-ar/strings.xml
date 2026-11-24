@@ -881,4 +881,20 @@
     <string name="downloads_cancel_selected_message">سيُحذف ما تم تنزيله حتى الآن.</string>
     <string name="downloads_cancel_selected_keep">إبقاء</string>
     <string name="data_dir_unusable">لا يمكن لـ YMusic فتح مجلد البيانات الخاص به، %1$s. تأكد من أنه مجلد يمكنك الكتابة فيه، ثم افتح YMusic مرة أخرى. (%2$s)</string>
+    <string name="sound_reverb">صدى</string>
+    <string name="sound_reverb_room">حجم الغرفة</string>
+    <string name="sound_reverb_damp">تخميد</string>
+    <string name="sound_reverb_mix">مزيج</string>
+    <string name="sound_reverb_predelay">تأخير مسبق</string>
+    <string name="sound_reverb_width">عرض</string>
+    <string name="sound_reverb_preset_room">غرفة</string>
+    <string name="sound_reverb_preset_hall">قاعة</string>
+    <string name="sound_reverb_preset_plate">صفيحة</string>
+    <string name="sound_reverb_preset_stadium">ملعب</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">متقدم</string>
+    <string name="sound_reverb_prefilter">مرشح تمهيدي</string>
+    <string name="sound_reverb_indiff1">انتشار المدخل 1</string>
+    <string name="sound_reverb_indiff2">انتشار المدخل 2</string>
+    <string name="sound_reverb_decaydiff">انتشار التلاشي</string>
 </resources>

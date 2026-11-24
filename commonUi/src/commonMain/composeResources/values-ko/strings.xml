@@ -684,4 +684,20 @@
     <string name="downloads_cancel_selected_message">지금까지 다운로드한 데이터가 삭제됩니다.</string>
     <string name="downloads_cancel_selected_keep">유지</string>
     <string name="data_dir_unusable">YMusic이 데이터 폴더(%1$s)를 열 수 없습니다. 쓰기 가능한 폴더인지 확인한 후 YMusic을 다시 여세요. (%2$s)</string>
+    <string name="sound_reverb">리버브</string>
+    <string name="sound_reverb_room">룸 크기</string>
+    <string name="sound_reverb_damp">댐핑</string>
+    <string name="sound_reverb_mix">믹스</string>
+    <string name="sound_reverb_predelay">프리딜레이</string>
+    <string name="sound_reverb_width">너비</string>
+    <string name="sound_reverb_preset_room">룸</string>
+    <string name="sound_reverb_preset_hall">홀</string>
+    <string name="sound_reverb_preset_plate">플레이트</string>
+    <string name="sound_reverb_preset_stadium">스타디움</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">고급</string>
+    <string name="sound_reverb_prefilter">프리 필터</string>
+    <string name="sound_reverb_indiff1">입력 디퓨전 1</string>
+    <string name="sound_reverb_indiff2">입력 디퓨전 2</string>
+    <string name="sound_reverb_decaydiff">감쇠 디퓨전</string>
 </resources>

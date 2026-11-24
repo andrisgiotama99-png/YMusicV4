@@ -155,6 +155,9 @@ interface Player {
 
     fun setPreamp(db: Float)
 
+    /** Sets [PlaybackConfig.reverb]. */
+    fun setReverb(reverb: ReverbConfig)
+
     /** Sets [PlaybackConfig.inAppAudioFx]. */
     fun setInAppAudioFx(enabled: Boolean)
 

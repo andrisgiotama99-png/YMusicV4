@@ -659,6 +659,23 @@ class MsePlayer internal constructor(
                 config.preampDb.coerceIn(-12f, 12f),
             )
         }
+        if (previous == null || config.reverb != previous.reverb) {
+            val rv = config.reverb
+            videoSurface.setReverb(
+                floatArrayOf(
+                    if (rv.enabled) 1f else 0f,
+                    rv.room.coerceIn(0f, 1f),
+                    rv.damp.coerceIn(0f, 1f),
+                    rv.mix.coerceIn(0f, 1f),
+                    rv.predelayMs.coerceIn(0f, 200f),
+                    rv.width.coerceIn(0f, 1f),
+                    rv.preFilter.coerceIn(0f, 1f),
+                    rv.inputDiffusion1.coerceIn(0f, 1f),
+                    rv.inputDiffusion2.coerceIn(0f, 1f),
+                    rv.decayDiffusion.coerceIn(0f, 1f),
+                ),
+            )
+        }
     }
 
     private fun applySurfaceVideo(previous: PlaybackConfig?, config: PlaybackConfig) {

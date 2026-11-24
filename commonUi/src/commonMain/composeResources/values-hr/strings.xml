@@ -710,4 +710,20 @@
     <string name="downloads_cancel_selected_message">Dosad preuzeti sadržaj bit će izbrisan.</string>
     <string name="downloads_cancel_selected_keep">Zadrži</string>
     <string name="data_dir_unusable">YMusic ne može otvoriti svoju mapu s podacima, %1$s. Provjerite je li to mapa u koju možete pisati, a zatim ponovno otvorite YMusic. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Veličina prostorije</string>
+    <string name="sound_reverb_damp">Prigušenje</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predkašnjenje</string>
+    <string name="sound_reverb_width">Širina</string>
+    <string name="sound_reverb_preset_room">Prostorija</string>
+    <string name="sound_reverb_preset_hall">Dvorana</string>
+    <string name="sound_reverb_preset_plate">Ploča</string>
+    <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">Napredno</string>
+    <string name="sound_reverb_prefilter">Predfilter</string>
+    <string name="sound_reverb_indiff1">Ulazna difuzija 1</string>
+    <string name="sound_reverb_indiff2">Ulazna difuzija 2</string>
+    <string name="sound_reverb_decaydiff">Difuzija opadanja</string>
 </resources>

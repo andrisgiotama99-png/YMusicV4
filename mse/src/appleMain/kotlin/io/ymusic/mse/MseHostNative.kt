@@ -12,6 +12,7 @@ import io.ymusic.mse.cinterop.mse_host_set_eq
 import io.ymusic.mse.cinterop.mse_host_set_js_event
 import io.ymusic.mse.cinterop.mse_host_set_pitch
 import io.ymusic.mse.cinterop.mse_host_set_preamp
+import io.ymusic.mse.cinterop.mse_host_set_reverb
 import io.ymusic.mse.cinterop.mse_host_set_speed
 import io.ymusic.mse.cinterop.mse_host_set_video_hidden
 import io.ymusic.mse.cinterop.mse_host_set_video_surface
@@ -150,6 +151,13 @@ actual object MseHostNative {
     actual fun setPreamp(handle: Long, db: Float) {
         if (handle == 0L) return
         mse_host_set_preamp(handle.toCPointer<COpaque>(), db)
+    }
+
+    actual fun setReverb(handle: Long, params: FloatArray) {
+        if (handle == 0L) return
+        params.usePinned { pinned ->
+            mse_host_set_reverb(handle.toCPointer<COpaque>(), pinned.addressOf(0))
+        }
     }
 
     actual fun setVideoHidden(handle: Long, hidden: Boolean) {

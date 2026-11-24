@@ -697,4 +697,20 @@
     <string name="downloads_cancel_selected_message">Bisher Heruntergeladenes wird gelöscht.</string>
     <string name="downloads_cancel_selected_keep">Behalten</string>
     <string name="data_dir_unusable">YMusic kann seinen Datenordner %1$s nicht öffnen. Stelle sicher, dass es ein Ordner ist, in den du schreiben kannst, und öffne YMusic dann erneut. (%2$s)</string>
+    <string name="sound_reverb">Hall</string>
+    <string name="sound_reverb_room">Raumgröße</string>
+    <string name="sound_reverb_damp">Dämpfung</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predelay</string>
+    <string name="sound_reverb_width">Breite</string>
+    <string name="sound_reverb_preset_room">Raum</string>
+    <string name="sound_reverb_preset_hall">Saal</string>
+    <string name="sound_reverb_preset_plate">Platte</string>
+    <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">Erweitert</string>
+    <string name="sound_reverb_prefilter">Vorfilter</string>
+    <string name="sound_reverb_indiff1">Eingangsdiffusion 1</string>
+    <string name="sound_reverb_indiff2">Eingangsdiffusion 2</string>
+    <string name="sound_reverb_decaydiff">Abklingdiffusion</string>
 </resources>

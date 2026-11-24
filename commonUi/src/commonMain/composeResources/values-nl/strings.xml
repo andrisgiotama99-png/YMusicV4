@@ -697,4 +697,20 @@
     <string name="downloads_cancel_selected_message">Wat tot nu toe is gedownload, wordt verwijderd.</string>
     <string name="downloads_cancel_selected_keep">Behouden</string>
     <string name="data_dir_unusable">YMusic kan zijn gegevensmap, %1$s, niet openen. Zorg dat het een map is waarin je kunt schrijven en open YMusic daarna opnieuw. (%2$s)</string>
+    <string name="sound_reverb">Reverb</string>
+    <string name="sound_reverb_room">Kamergrootte</string>
+    <string name="sound_reverb_damp">Demping</string>
+    <string name="sound_reverb_mix">Mix</string>
+    <string name="sound_reverb_predelay">Predelay</string>
+    <string name="sound_reverb_width">Breedte</string>
+    <string name="sound_reverb_preset_room">Kamer</string>
+    <string name="sound_reverb_preset_hall">Zaal</string>
+    <string name="sound_reverb_preset_plate">Plaat</string>
+    <string name="sound_reverb_preset_stadium">Stadion</string>
+    <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_advanced">Geavanceerd</string>
+    <string name="sound_reverb_prefilter">Voorfilter</string>
+    <string name="sound_reverb_indiff1">Ingangsdiffusie 1</string>
+    <string name="sound_reverb_indiff2">Ingangsdiffusie 2</string>
+    <string name="sound_reverb_decaydiff">Vervaldiffusie</string>
 </resources>
