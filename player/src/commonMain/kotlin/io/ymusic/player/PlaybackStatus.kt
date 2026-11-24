@@ -1,6 +1,5 @@
 package io.ymusic.player
 
-import io.ymusic.player.audiofx.ReverbConfig
 import projectcommon.error.CodedError
 import projectcommon.error.PLAYBACK_UNAVAILABLE_CODE
 
@@ -94,8 +93,6 @@ data class PlaybackConfig(
     val reverb: ReverbConfig = ReverbConfig(),
     /** False bypasses the equalizer/bass/virtualizer/preamp (system audio effects take over); the values are kept. */
     val inAppAudioFx: Boolean = true,
-    /** Reverb effect configuration. Default is disabled. */
-    val reverb: ReverbConfig = ReverbConfig(),
     /** False: no loudness gain ([PlayableItem.loudnessScale], YouTube's), and no YouTube stable-volume track. */
     val stableVolume: Boolean = true,
     val loop: Boolean = false,
