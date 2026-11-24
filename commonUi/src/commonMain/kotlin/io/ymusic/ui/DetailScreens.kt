@@ -509,7 +509,7 @@ fun ChannelDetailScreen(
             onOpen = onOpen,
             // Loading is a bare spinner — the header waits for the page instead of rendering from the tapped item.
             topContent = if (onHomeTab && ready != null) {
-                { ChannelHeader(ready?.pageHeader, fallback = item, s.subscribed, s.subscribing) { s.toggleSubscription(it) } }
+                { ChannelHeader(ready.pageHeader, fallback = item, s.subscribed, s.subscribing) { s.toggleSubscription(it) } }
             } else {
                 null
             },

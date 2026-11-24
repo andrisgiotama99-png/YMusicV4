@@ -174,8 +174,10 @@ internal fun DownloadSheet(
                     if (state.hasVideo && !state.audioOnly) QualityGrid(state) else AudioFormats(state, options.audio)
                     Column {
                         if (state.format.kind == DownloadKind.VIDEO) {
+                            @Suppress("DEPRECATION")
+                            val insertDriveFile = Icons.Outlined.InsertDriveFile
                             DropdownOptionRow(
-                                Icons.Outlined.InsertDriveFile,
+                                insertDriveFile,
                                 stringResource(Res.string.download_container),
                                 state.format.displayName(),
                                 containerChoices(state),

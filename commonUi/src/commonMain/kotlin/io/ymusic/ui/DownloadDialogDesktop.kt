@@ -208,7 +208,9 @@ private fun FileNameField(state: DownloadOptionsState) {
 @Composable
 private fun TrackRows(state: DownloadOptionsState) {
     val options = state.options ?: return
-    TrackRow(Icons.Outlined.InsertDriveFile, stringResource(Res.string.download_format)) {
+    @Suppress("DEPRECATION")
+    val insertDriveFile = Icons.Outlined.InsertDriveFile
+    TrackRow(insertDriveFile, stringResource(Res.string.download_format)) {
         FormatDropdown(state)
     }
     if (state.showsAudioQuality) {
@@ -217,7 +219,9 @@ private fun TrackRows(state: DownloadOptionsState) {
             DropdownField(audioQualityLabel(state)) { close -> ChoiceMenuItems(choices, close) }
         }
     }
-    TrackRow(Icons.Outlined.VolumeUp, stringResource(Res.string.download_audio_language)) {
+    @Suppress("DEPRECATION")
+    val volumeUp = Icons.Outlined.VolumeUp
+    TrackRow(volumeUp, stringResource(Res.string.download_audio_language)) {
         val choices = audioTrackChoices(state)
         DropdownField(audioTrackLabel(state)) { close -> ChoiceMenuItems(choices, close) }
     }
