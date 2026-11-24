@@ -91,12 +91,19 @@ import io.ymusic.ui.resources.sound_reverb
 import io.ymusic.ui.resources.sound_reverb_damp
 import io.ymusic.ui.resources.sound_reverb_mix
 import io.ymusic.ui.resources.sound_reverb_predelay
+import io.ymusic.ui.resources.sound_reverb_preset_ambience
+import io.ymusic.ui.resources.sound_reverb_preset_arena
 import io.ymusic.ui.resources.sound_reverb_preset_cathedral
+import io.ymusic.ui.resources.sound_reverb_preset_cave
+import io.ymusic.ui.resources.sound_reverb_preset_chamber
 import io.ymusic.ui.resources.sound_reverb_preset_hall
+import io.ymusic.ui.resources.sound_reverb_preset_loft
 import io.ymusic.ui.resources.sound_reverb_preset_off
 import io.ymusic.ui.resources.sound_reverb_preset_plate
 import io.ymusic.ui.resources.sound_reverb_preset_room
+import io.ymusic.ui.resources.sound_reverb_preset_spring
 import io.ymusic.ui.resources.sound_reverb_preset_stadium
+import io.ymusic.ui.resources.sound_reverb_preset_vocal
 import io.ymusic.ui.resources.sound_reverb_room
 import io.ymusic.ui.resources.sound_reverb_width
 import io.ymusic.ui.resources.sound_reset
@@ -190,6 +197,34 @@ private val REVERB_PRESETS = listOf(
     ReverbPreset(Res.string.sound_reverb_preset_cathedral, ReverbConfig(
         enabled = true, room = 0.95f, damp = 0.80f, mix = 0.55f, predelayMs = 90f,
         width = 1.0f, preFilter = 0.98f, inputDiffusion1 = 0.90f, inputDiffusion2 = 0.80f, decayDiffusion = 0.85f
+    )),
+    ReverbPreset(Res.string.sound_reverb_preset_chamber, ReverbConfig(
+        enabled = true, room = 0.55f, damp = 0.50f, mix = 0.30f, predelayMs = 25f,
+        width = 0.90f, preFilter = 0.85f, inputDiffusion1 = 0.75f, inputDiffusion2 = 0.65f, decayDiffusion = 0.70f
+    )),
+    ReverbPreset(Res.string.sound_reverb_preset_spring, ReverbConfig(
+        enabled = true, room = 0.40f, damp = 0.25f, mix = 0.35f, predelayMs = 5f,
+        width = 0.80f, preFilter = 0.70f, inputDiffusion1 = 0.60f, inputDiffusion2 = 0.50f, decayDiffusion = 0.55f
+    )),
+    ReverbPreset(Res.string.sound_reverb_preset_ambience, ReverbConfig(
+        enabled = true, room = 0.15f, damp = 0.40f, mix = 0.15f, predelayMs = 8f,
+        width = 0.60f, preFilter = 0.75f, inputDiffusion1 = 0.55f, inputDiffusion2 = 0.45f, decayDiffusion = 0.50f
+    )),
+    ReverbPreset(Res.string.sound_reverb_preset_cave, ReverbConfig(
+        enabled = true, room = 0.85f, damp = 0.85f, mix = 0.50f, predelayMs = 50f,
+        width = 1.0f, preFilter = 0.95f, inputDiffusion1 = 0.85f, inputDiffusion2 = 0.75f, decayDiffusion = 0.80f
+    )),
+    ReverbPreset(Res.string.sound_reverb_preset_arena, ReverbConfig(
+        enabled = true, room = 0.80f, damp = 0.55f, mix = 0.40f, predelayMs = 35f,
+        width = 1.0f, preFilter = 0.90f, inputDiffusion1 = 0.80f, inputDiffusion2 = 0.70f, decayDiffusion = 0.75f
+    )),
+    ReverbPreset(Res.string.sound_reverb_preset_vocal, ReverbConfig(
+        enabled = true, room = 0.45f, damp = 0.60f, mix = 0.28f, predelayMs = 20f,
+        width = 0.70f, preFilter = 0.90f, inputDiffusion1 = 0.70f, inputDiffusion2 = 0.60f, decayDiffusion = 0.65f
+    )),
+    ReverbPreset(Res.string.sound_reverb_preset_loft, ReverbConfig(
+        enabled = true, room = 0.75f, damp = 0.30f, mix = 0.45f, predelayMs = 45f,
+        width = 1.0f, preFilter = 0.85f, inputDiffusion1 = 0.80f, inputDiffusion2 = 0.70f, decayDiffusion = 0.75f
     )),
 )
 

@@ -864,6 +864,13 @@
     <string name="sound_reverb_preset_plate">Plate</string>
     <string name="sound_reverb_preset_stadium">Stadium</string>
     <string name="sound_reverb_preset_cathedral">Cathedral</string>
+    <string name="sound_reverb_preset_chamber">Chamber</string>
+    <string name="sound_reverb_preset_spring">Spring</string>
+    <string name="sound_reverb_preset_ambience">Ambience</string>
+    <string name="sound_reverb_preset_cave">Cave</string>
+    <string name="sound_reverb_preset_arena">Arena</string>
+    <string name="sound_reverb_preset_vocal">Vocal</string>
+    <string name="sound_reverb_preset_loft">Loft</string>
     <string name="sound_reverb_advanced">Advanced</string>
     <string name="sound_reverb_prefilter">Pre-filter</string>
     <string name="sound_reverb_indiff1">Input diffusion 1</string>
