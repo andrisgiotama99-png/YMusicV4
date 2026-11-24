@@ -87,12 +87,16 @@ import io.ymusic.ui.resources.sound_preset_pop
 import io.ymusic.ui.resources.sound_preset_rock
 import io.ymusic.ui.resources.sound_preset_treble
 import io.ymusic.ui.resources.sound_preset_voice
+import io.ymusic.ui.resources.sound_reverb_preset_cathedral
+import io.ymusic.ui.resources.sound_reverb_preset_hall
+import io.ymusic.ui.resources.sound_reverb_preset_off
+import io.ymusic.ui.resources.sound_reverb_preset_plate
+import io.ymusic.ui.resources.sound_reverb_preset_room
+import io.ymusic.ui.resources.sound_reverb_preset_stadium
 import io.ymusic.ui.resources.sound_reset
-import io.ymusic.ui.resources.sound_reverb_level
 import io.ymusic.ui.resources.sound_virtualizer_title
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import androidx.compose.material3.Slider
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -154,6 +158,32 @@ private val EQ_PRESETS = listOf(
     EqPreset(Res.string.sound_preset_pop, listOf(-1f, 2f, 4f, 4f, 1f, -1f, -2f, -2f, 1f, 2f)),
     EqPreset(Res.string.sound_preset_classical, listOf(5f, 4f, 3f, 2f, -1f, -1f, 0f, 2f, 3f, 4f)),
     EqPreset(Res.string.sound_preset_electronic, listOf(4f, 3f, 1f, 0f, -2f, 2f, 1f, 2f, 3f, 4f)),
+)
+
+private data class ReverbPreset(val label: StringResource, val config: ReverbConfig)
+
+private val REVERB_PRESETS = listOf(
+    ReverbPreset(Res.string.sound_reverb_preset_off, ReverbConfig(enabled = false)),
+    ReverbPreset(Res.string.sound_reverb_preset_room, ReverbConfig(
+        enabled = true, room = 0.3f, damp = 0.5f, mix = 0.20f, predelayMs = 15f,
+        width = 0.7f, preFilter = 0.80f, inputDiffusion1 = 0.70f, inputDiffusion2 = 0.60f, decayDiffusion = 0.60f
+    )),
+    ReverbPreset(Res.string.sound_reverb_preset_hall, ReverbConfig(
+        enabled = true, room = 0.70f, damp = 0.60f, mix = 0.35f, predelayMs = 40f,
+        width = 1.0f, preFilter = 0.90f, inputDiffusion1 = 0.80f, inputDiffusion2 = 0.70f, decayDiffusion = 0.75f
+    )),
+    ReverbPreset(Res.string.sound_reverb_preset_plate, ReverbConfig(
+        enabled = true, room = 0.0f, damp = 0.30f, mix = 0.25f, predelayMs = 5f,
+        width = 0.90f, preFilter = 0.70f, inputDiffusion1 = 0.60f, inputDiffusion2 = 0.50f, decayDiffusion = 0.65f
+    )),
+    ReverbPreset(Res.string.sound_reverb_preset_stadium, ReverbConfig(
+        enabled = true, room = 0.90f, damp = 0.70f, mix = 0.45f, predelayMs = 60f,
+        width = 1.0f, preFilter = 0.95f, inputDiffusion1 = 0.85f, inputDiffusion2 = 0.75f, decayDiffusion = 0.80f
+    )),
+    ReverbPreset(Res.string.sound_reverb_preset_cathedral, ReverbConfig(
+        enabled = true, room = 0.95f, damp = 0.80f, mix = 0.55f, predelayMs = 90f,
+        width = 1.0f, preFilter = 0.98f, inputDiffusion1 = 0.90f, inputDiffusion2 = 0.80f, decayDiffusion = 0.85f
+    )),
 )
 
 /**
@@ -696,7 +726,7 @@ internal fun eqPresetLabel(eqBands: List<Float>): StringResource {
 private fun bandsMatch(a: List<Float>, b: List<Float>): Boolean =
     a.size == b.size && a.indices.all { abs(a[it] - b[it]) < 0.2f }
 
-/** Reverb: a single slider controlling the wet level, labeled "Reverb Level". */
+/** Reverb: preset dropdown (Off / Room / Hall / Plate / Stadium / Cathedral). */
 @Composable
 private fun ReverbSection(
     reverb: ReverbConfig,
@@ -704,34 +734,59 @@ private fun ReverbSection(
     onChange: (ReverbConfig) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var level by remember { mutableStateOf(reverb.mix) }
-    LaunchedEffect(reverb) { level = reverb.mix }
+    var open by remember { mutableStateOf(false) }
+    val match = REVERB_PRESETS.firstOrNull { it.config == reverb }
+    val shape = RoundedCornerShape(8.dp)
     Column(
         modifier = modifier.fillMaxWidth().padding(horizontal = DesignSpacing.Space16),
         verticalArrangement = Arrangement.spacedBy(DesignSpacing.Space8),
     ) {
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .clip(shape)
+                .background(DesignColors.SettingsCard)
+                .border(1.dp, DesignColors.OutlineSoft, shape)
+                .clickable(role = Role.DropdownList) { if (enabled) open = true }
+                .padding(horizontal = DesignSpacing.Space8 + DesignSpacing.Space2, vertical = DesignSpacing.Space4 + DesignSpacing.Space2),
+            horizontalArrangement = Arrangement.spacedBy(DesignSpacing.Space4 + DesignSpacing.Space2),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                stringResource(Res.string.sound_reverb_level),
-                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = DesignColors.Ink),
+                stringResource(match?.label ?: Res.string.sound_reverb_preset_off),
+                style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = DesignColors.Ink),
                 modifier = Modifier.weight(1f),
             )
-            Text(
-                "${(level * 100).roundToInt()}%",
-                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = DesignColors.Accent),
-            )
+            val chevron = DesignColors.InkSecondary
+            Canvas(Modifier.size(10.dp)) {
+                val path = Path().apply {
+                    moveTo(size.width * 0.2f, size.height * 0.35f)
+                    lineTo(size.width * 0.5f, size.height * 0.65f)
+                    lineTo(size.width * 0.8f, size.height * 0.35f)
+                }
+                drawPath(path, chevron, style = Stroke(1.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+            }
         }
-        Slider(
-            value = level,
-            onValueChange = {
-                level = it
-                onChange(ReverbConfig(enabled = it > 0f, mix = it))
-            },
-            valueRange = 0f..1f,
-            enabled = enabled,
-        )
+        DropdownMenu(expanded = open && enabled, onDismissRequest = { open = false }) {
+            REVERB_PRESETS.forEach { preset ->
+                val selected = preset == match
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            stringResource(preset.label),
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                                color = if (selected) DesignColors.Accent else DesignColors.Ink,
+                            ),
+                        )
+                    },
+                    onClick = {
+                        onChange(preset.config)
+                        open = false
+                    },
+                    enabled = enabled,
+                )
+            }
+        }
     }
 }

@@ -727,4 +727,5 @@
     <string name="sound_reverb_indiff2">Difusió d\'entrada 2</string>
     <string name="sound_reverb_decaydiff">Difusió de decaïment</string>
     <string name="sound_reverb_level">Reverb Level</string>
+    <string name="sound_reverb_preset_off">Off</string>
 </resources>

@@ -714,4 +714,5 @@
     <string name="sound_reverb_indiff2">इनपुट डिफ्युजन 2</string>
     <string name="sound_reverb_decaydiff">डिके डिफ्युजन</string>
     <string name="sound_reverb_level">Reverb Level</string>
+    <string name="sound_reverb_preset_off">Off</string>
 </resources>

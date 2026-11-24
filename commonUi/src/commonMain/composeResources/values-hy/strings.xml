@@ -714,4 +714,5 @@
     <string name="sound_reverb_indiff2">Մուտքային դիֆուզիա 2</string>
     <string name="sound_reverb_decaydiff">Մարման դիֆուզիա</string>
     <string name="sound_reverb_level">Reverb Level</string>
+    <string name="sound_reverb_preset_off">Off</string>
 </resources>

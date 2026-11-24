@@ -714,4 +714,5 @@
     <string name="sound_reverb_indiff2">ආදාන විසරණය 2</string>
     <string name="sound_reverb_decaydiff">ක්ෂය විසරණය</string>
     <string name="sound_reverb_level">Reverb Level</string>
+    <string name="sound_reverb_preset_off">Off</string>
 </resources>
