@@ -97,6 +97,7 @@ import io.ymusic.ui.resources.sound_reverb_preset_off
 import io.ymusic.ui.resources.sound_reverb_preset_plate
 import io.ymusic.ui.resources.sound_reverb_preset_room
 import io.ymusic.ui.resources.sound_reverb_preset_stadium
+import io.ymusic.ui.resources.sound_reverb_room
 import io.ymusic.ui.resources.sound_reverb_width
 import io.ymusic.ui.resources.sound_reset
 import io.ymusic.ui.resources.sound_virtualizer_title
