@@ -168,7 +168,7 @@ internal fun SortControl(
             }
         }
         if (manual) {
-            ActionIcon(Icons.Outlined.Edit, stringResource(Res.string.arrange_songs), tint = DesignColors.InkSoft) { onArrange?.invoke() }
+            ActionIcon(Icons.Outlined.Edit, stringResource(Res.string.arrange_songs), tint = DesignColors.InkSoft) { onArrange() }
         } else {
             ActionIcon(
                 if (state.descending) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,

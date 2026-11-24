@@ -140,7 +140,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.StringResource
@@ -396,9 +396,8 @@ fun DownloadsScreen(graph: AppGraph, coordinator: PlaybackCoordinator) {
                                 ?: graph.settings.downloadLocationFolder()?.let { store.findBucketByUri(Uri.parse(it)) }?.id
                             navigate(AppSection.Library)
                         }
-                        Unit
                     }) else null,
-                    onRevealFolder = graph.revealInFolder?.let { hook -> { task.fileUri?.let { uri -> scope.launch { hook(uri) } }; Unit } },
+                    onRevealFolder = graph.revealInFolder?.let { hook -> { task.fileUri?.let { uri -> scope.launch { hook(uri) } } } },
                     fileActions = completedFileActions(graph, task, service, onRename = { renaming = task }),
                     onOtherFormat = downloadLauncher?.let { launcher -> { launcher.launch(task.toFeedItem()) } },
                 )
@@ -971,8 +970,8 @@ private fun DownloadFormat.badgeColor(): Color = when (this) {
 @Composable
 internal fun formatShortDate(epochMs: Long): String {
     val dt = Instant.fromEpochMilliseconds(epochMs).toLocalDateTime(TimeZone.currentSystemDefault())
-    val month = stringArrayResource(Res.array.month_abbr)[dt.monthNumber - 1]
-    return stringResource(Res.string.downloads_completed_date, month, dt.dayOfMonth, dt.year)
+    val month = stringArrayResource(Res.array.month_abbr)[dt.month.ordinal]
+    return stringResource(Res.string.downloads_completed_date, month, dt.day, dt.year)
 }
 
 @Composable
