@@ -87,25 +87,6 @@ import io.ymusic.ui.resources.sound_preset_pop
 import io.ymusic.ui.resources.sound_preset_rock
 import io.ymusic.ui.resources.sound_preset_treble
 import io.ymusic.ui.resources.sound_preset_voice
-import io.ymusic.ui.resources.sound_reverb
-import io.ymusic.ui.resources.sound_reverb_damp
-import io.ymusic.ui.resources.sound_reverb_mix
-import io.ymusic.ui.resources.sound_reverb_predelay
-import io.ymusic.ui.resources.sound_reverb_preset_ambience
-import io.ymusic.ui.resources.sound_reverb_preset_arena
-import io.ymusic.ui.resources.sound_reverb_preset_cathedral
-import io.ymusic.ui.resources.sound_reverb_preset_cave
-import io.ymusic.ui.resources.sound_reverb_preset_chamber
-import io.ymusic.ui.resources.sound_reverb_preset_hall
-import io.ymusic.ui.resources.sound_reverb_preset_loft
-import io.ymusic.ui.resources.sound_reverb_preset_off
-import io.ymusic.ui.resources.sound_reverb_preset_plate
-import io.ymusic.ui.resources.sound_reverb_preset_room
-import io.ymusic.ui.resources.sound_reverb_preset_spring
-import io.ymusic.ui.resources.sound_reverb_preset_stadium
-import io.ymusic.ui.resources.sound_reverb_preset_vocal
-import io.ymusic.ui.resources.sound_reverb_room
-import io.ymusic.ui.resources.sound_reverb_width
 import io.ymusic.ui.resources.sound_reset
 import io.ymusic.ui.resources.sound_virtualizer_title
 import io.ymusic.ui.trimFloat
@@ -174,59 +155,6 @@ private val EQ_PRESETS = listOf(
     EqPreset(Res.string.sound_preset_electronic, listOf(4f, 3f, 1f, 0f, -2f, 2f, 1f, 2f, 3f, 4f)),
 )
 
-private data class ReverbPreset(val label: StringResource, val config: ReverbConfig)
-
-private val REVERB_PRESETS = listOf(
-    ReverbPreset(Res.string.sound_reverb_preset_off, ReverbConfig(enabled = false)),
-    ReverbPreset(Res.string.sound_reverb_preset_room, ReverbConfig(
-        enabled = true, room = 0.3f, damp = 0.5f, mix = 0.20f, predelayMs = 15f,
-        width = 0.7f, preFilter = 0.80f, inputDiffusion1 = 0.70f, inputDiffusion2 = 0.60f, decayDiffusion = 0.60f
-    )),
-    ReverbPreset(Res.string.sound_reverb_preset_hall, ReverbConfig(
-        enabled = true, room = 0.70f, damp = 0.60f, mix = 0.35f, predelayMs = 40f,
-        width = 1.0f, preFilter = 0.90f, inputDiffusion1 = 0.80f, inputDiffusion2 = 0.70f, decayDiffusion = 0.75f
-    )),
-    ReverbPreset(Res.string.sound_reverb_preset_plate, ReverbConfig(
-        enabled = true, room = 0.0f, damp = 0.30f, mix = 0.25f, predelayMs = 5f,
-        width = 0.90f, preFilter = 0.70f, inputDiffusion1 = 0.60f, inputDiffusion2 = 0.50f, decayDiffusion = 0.65f
-    )),
-    ReverbPreset(Res.string.sound_reverb_preset_stadium, ReverbConfig(
-        enabled = true, room = 0.90f, damp = 0.70f, mix = 0.45f, predelayMs = 60f,
-        width = 1.0f, preFilter = 0.95f, inputDiffusion1 = 0.85f, inputDiffusion2 = 0.75f, decayDiffusion = 0.80f
-    )),
-    ReverbPreset(Res.string.sound_reverb_preset_cathedral, ReverbConfig(
-        enabled = true, room = 0.95f, damp = 0.80f, mix = 0.55f, predelayMs = 90f,
-        width = 1.0f, preFilter = 0.98f, inputDiffusion1 = 0.90f, inputDiffusion2 = 0.80f, decayDiffusion = 0.85f
-    )),
-    ReverbPreset(Res.string.sound_reverb_preset_chamber, ReverbConfig(
-        enabled = true, room = 0.55f, damp = 0.50f, mix = 0.30f, predelayMs = 25f,
-        width = 0.90f, preFilter = 0.85f, inputDiffusion1 = 0.75f, inputDiffusion2 = 0.65f, decayDiffusion = 0.70f
-    )),
-    ReverbPreset(Res.string.sound_reverb_preset_spring, ReverbConfig(
-        enabled = true, room = 0.40f, damp = 0.25f, mix = 0.35f, predelayMs = 5f,
-        width = 0.80f, preFilter = 0.70f, inputDiffusion1 = 0.60f, inputDiffusion2 = 0.50f, decayDiffusion = 0.55f
-    )),
-    ReverbPreset(Res.string.sound_reverb_preset_ambience, ReverbConfig(
-        enabled = true, room = 0.15f, damp = 0.40f, mix = 0.15f, predelayMs = 8f,
-        width = 0.60f, preFilter = 0.75f, inputDiffusion1 = 0.55f, inputDiffusion2 = 0.45f, decayDiffusion = 0.50f
-    )),
-    ReverbPreset(Res.string.sound_reverb_preset_cave, ReverbConfig(
-        enabled = true, room = 0.85f, damp = 0.85f, mix = 0.50f, predelayMs = 50f,
-        width = 1.0f, preFilter = 0.95f, inputDiffusion1 = 0.85f, inputDiffusion2 = 0.75f, decayDiffusion = 0.80f
-    )),
-    ReverbPreset(Res.string.sound_reverb_preset_arena, ReverbConfig(
-        enabled = true, room = 0.80f, damp = 0.55f, mix = 0.40f, predelayMs = 35f,
-        width = 1.0f, preFilter = 0.90f, inputDiffusion1 = 0.80f, inputDiffusion2 = 0.70f, decayDiffusion = 0.75f
-    )),
-    ReverbPreset(Res.string.sound_reverb_preset_vocal, ReverbConfig(
-        enabled = true, room = 0.45f, damp = 0.60f, mix = 0.28f, predelayMs = 20f,
-        width = 0.70f, preFilter = 0.90f, inputDiffusion1 = 0.70f, inputDiffusion2 = 0.60f, decayDiffusion = 0.65f
-    )),
-    ReverbPreset(Res.string.sound_reverb_preset_loft, ReverbConfig(
-        enabled = true, room = 0.75f, damp = 0.30f, mix = 0.45f, predelayMs = 45f,
-        width = 1.0f, preFilter = 0.85f, inputDiffusion1 = 0.80f, inputDiffusion2 = 0.70f, decayDiffusion = 0.75f
-    )),
-)
 
 /**
  * Equalizer: a mixing-desk bank of ten faders, a preset menu in the title bar, and bass / virtualizer knobs.
@@ -768,11 +696,7 @@ internal fun eqPresetLabel(eqBands: List<Float>): StringResource {
 private fun bandsMatch(a: List<Float>, b: List<Float>): Boolean =
     a.size == b.size && a.indices.all { abs(a[it] - b[it]) < 0.2f }
 
-/**
- * Reverb: preset dropdown (Off / Room / Hall / Plate / Stadium / Cathedral) plus editable knobs
- * for room, damp, mix, predelay and width. Picking a preset fills the knobs; turning any knob away
- * from the matched preset's values shows it as Custom.
- */
+/** Reverb: one "Reverb Level" knob that drives the wet mix — 0% = off, above 0% = on. */
 @Composable
 private fun ReverbSection(
     reverb: ReverbConfig,
@@ -780,146 +704,27 @@ private fun ReverbSection(
     onChange: (ReverbConfig) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var open by remember { mutableStateOf(false) }
-    val match = REVERB_PRESETS.firstOrNull { it.config == reverb }
-    // Local knob state, seeded from the current config.
-    var room by remember(reverb) { mutableStateOf(reverb.room) }
-    var damp by remember(reverb) { mutableStateOf(reverb.damp) }
-    var mix by remember(reverb) { mutableStateOf(reverb.mix) }
-    var predelayMs by remember(reverb) { mutableStateOf(reverb.predelayMs) }
-    var width by remember(reverb) { mutableStateOf(reverb.width) }
-
-    // True when the current knob state deviates from every preset → "Custom".
-    val isCustom = match == null || !configMatchesPreset(reverb, match.config)
-
-    val shape = RoundedCornerShape(8.dp)
     Column(
         modifier = modifier.fillMaxWidth().padding(horizontal = DesignSpacing.Space16),
         verticalArrangement = Arrangement.spacedBy(DesignSpacing.Space8),
     ) {
-        // Preset picker row.
-        Row(
-            Modifier
-                .clip(shape)
-                .background(DesignColors.SettingsCard)
-                .border(1.dp, DesignColors.OutlineSoft, shape)
-                .clickable(role = Role.DropdownList) { if (enabled) open = true }
-                .padding(horizontal = DesignSpacing.Space8 + DesignSpacing.Space2, vertical = DesignSpacing.Space4 + DesignSpacing.Space2),
-            horizontalArrangement = Arrangement.spacedBy(DesignSpacing.Space4 + DesignSpacing.Space2),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            val label = if (isCustom) Res.string.sound_preset_custom else (match?.label ?: Res.string.sound_reverb_preset_off)
-            Text(
-                stringResource(label),
-                style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = DesignColors.Ink),
-                modifier = Modifier.weight(1f),
-            )
-            val chevron = DesignColors.InkSecondary
-            Canvas(Modifier.size(10.dp)) {
-                val path = Path().apply {
-                    moveTo(size.width * 0.2f, size.height * 0.35f)
-                    lineTo(size.width * 0.5f, size.height * 0.65f)
-                    lineTo(size.width * 0.8f, size.height * 0.35f)
-                }
-                drawPath(path, chevron, style = Stroke(1.6.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
-            }
-        }
-        DropdownMenu(expanded = open && enabled, onDismissRequest = { open = false }) {
-            REVERB_PRESETS.forEach { preset ->
-                val selected = preset == match
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            stringResource(preset.label),
-                            style = TextStyle(
-                                fontSize = 14.sp,
-                                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
-                                color = if (selected) DesignColors.Accent else DesignColors.Ink,
-                            ),
-                        )
-                    },
-                    onClick = {
-                        onChange(preset.config)
-                        room = preset.config.room
-                        damp = preset.config.damp
-                        mix = preset.config.mix
-                        predelayMs = preset.config.predelayMs
-                        width = preset.config.width
-                        open = false
-                    },
-                    enabled = enabled,
-                )
-            }
-        }
-
-        // Editable knobs — only when reverb is enabled.
-        if (enabled && !isCustom) {
-            Text(
-                stringResource(Res.string.sound_reverb),
-                style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = DesignColors.InkSecondary),
-            )
-        }
         if (enabled) {
+            // Off is represented by level 0 even if a stale config still carries a mix value.
+            val level = if (reverb.enabled) reverb.mix.coerceIn(0f, 1f) else 0f
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 RotaryKnob(
                     enabled = enabled,
-                    title = stringResource(Res.string.sound_reverb_room),
-                    fraction = room,
-                    valueText = "${trimFloat(room)}",
+                    title = stringResource(Res.string.sound_reverb_level),
+                    fraction = level,
+                    valueText = "${(level * 100).roundToInt()}%",
                     keyStep = 0.05f,
-                    onChange = { room = it; onChange(reverb.copy(room = it)) },
-                )
-                RotaryKnob(
-                    enabled = enabled,
-                    title = stringResource(Res.string.sound_reverb_damp),
-                    fraction = damp,
-                    valueText = "${trimFloat(damp)}",
-                    keyStep = 0.05f,
-                    onChange = { damp = it; onChange(reverb.copy(damp = it)) },
-                )
-                RotaryKnob(
-                    enabled = enabled,
-                    title = stringResource(Res.string.sound_reverb_mix),
-                    fraction = mix,
-                    valueText = "${trimFloat(mix)}",
-                    keyStep = 0.05f,
-                    onChange = { mix = it; onChange(reverb.copy(mix = it)) },
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                RotaryKnob(
-                    enabled = enabled,
-                    title = stringResource(Res.string.sound_reverb_predelay),
-                    fraction = (predelayMs / 200f).coerceIn(0f, 1f),
-                    valueText = "${trimFloat(predelayMs)} ms",
-                    keyStep = 0.05f,
-                    onChange = { predelayMs = (it * 200f).roundToInt().toFloat(); onChange(reverb.copy(predelayMs = predelayMs)) },
-                )
-                RotaryKnob(
-                    enabled = enabled,
-                    title = stringResource(Res.string.sound_reverb_width),
-                    fraction = width,
-                    valueText = "${trimFloat(width)}",
-                    keyStep = 0.05f,
-                    onChange = { width = it; onChange(reverb.copy(width = it)) },
+                    onChange = { onChange(reverb.copy(enabled = it > 0f, mix = it)) },
                 )
             }
         }
     }
 }
-
-/** Returns true when [cfg] matches [preset] within tolerance. */
-private fun configMatchesPreset(cfg: ReverbConfig, preset: ReverbConfig): Boolean =
-    abs(cfg.room - preset.room) < 0.01f &&
-    abs(cfg.damp - preset.damp) < 0.01f &&
-    abs(cfg.mix - preset.mix) < 0.01f &&
-    abs(cfg.predelayMs - preset.predelayMs) < 1f &&
-    abs(cfg.width - preset.width) < 0.01f
