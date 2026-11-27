@@ -87,6 +87,7 @@ import io.ymusic.ui.resources.sound_preset_pop
 import io.ymusic.ui.resources.sound_preset_rock
 import io.ymusic.ui.resources.sound_preset_treble
 import io.ymusic.ui.resources.sound_preset_voice
+import io.ymusic.ui.resources.sound_reverb_level
 import io.ymusic.ui.resources.sound_reset
 import io.ymusic.ui.resources.sound_virtualizer_title
 import io.ymusic.ui.trimFloat
