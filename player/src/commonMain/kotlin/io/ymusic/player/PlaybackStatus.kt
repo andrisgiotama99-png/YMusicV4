@@ -51,9 +51,9 @@ enum class ScaleMode { COVER, FILL, CONTAIN }
 data class ReverbConfig(
     val enabled: Boolean = false,
     val room: Float = 0.5f,
-    val damp: Float = 0.5f,
-    val mix: Float = 0.3f,
-    val predelayMs: Float = 20f,
+    val damp: Float = 0.7f,
+    val mix: Float = 0.7f,
+    val predelayMs: Float = 0f,
     val width: Float = 1f,
     val preFilter: Float = 0.85f,
     val inputDiffusion1: Float = 0.75f,
